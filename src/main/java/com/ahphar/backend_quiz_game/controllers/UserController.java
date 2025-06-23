@@ -1,0 +1,66 @@
+package com.ahphar.backend_quiz_game.controllers;
+
+import com.ahphar.backend_quiz_game.DTO.UpdateUsernameRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.UserResponseDTO;
+import com.ahphar.backend_quiz_game.mapper.UserMapper;
+import com.ahphar.backend_quiz_game.models.User;
+import com.ahphar.backend_quiz_game.services.UserService;
+import com.ahphar.backend_quiz_game.util.JwtUtil;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+public class UserController {
+
+    private final UserService userService;
+    private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+
+    public UserController(UserService userService, UserMapper userMapper, JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @GetMapping("/user-info")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found "+username));
+
+        UserResponseDTO userResponseDTO = userMapper.toDto(user);
+
+        return ResponseEntity.ok(userResponseDTO);
+    }
+
+    @PutMapping("/update-username")
+    public ResponseEntity<?> updateUsername(
+            Authentication authentication,
+            @RequestBody UpdateUsernameRequestDTO requestDTO) {
+
+        String currentUsername = authentication.getName();
+
+        try {
+            User updatedUser = userService.updateUsername(currentUsername, requestDTO.getNewUsername());
+            String newToken = jwtUtil.generateToken(updatedUser.getUsername());
+            UserResponseDTO responseDTO = userMapper.toDto(updatedUser);
+
+            return ResponseEntity.ok(Map.of(
+                    "token", newToken,
+                    "user", responseDTO
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+
+}
