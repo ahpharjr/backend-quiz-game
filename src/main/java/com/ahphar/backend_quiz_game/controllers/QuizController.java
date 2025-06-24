@@ -26,13 +26,6 @@ public class QuizController {
         return ResponseEntity.ok(questions);
     }
 
-    // @GetMapping("/questions/{questionId}/answers")
-    // public ResponseEntity<List<Answer>> getAllAnswers(@PathVariable Long questionId){
-    //     List<Answer> answers = quizService.getAnswersByQuestion(questionId);
-
-    //     return ResponseEntity.ok(answers);
-    // }
-
     @GetMapping("/{quizId}/answers")
     public ResponseEntity<List<Answer>> getAllAnswersByQuiz(@PathVariable Long quizId){
         List<Answer> answers = quizService.getAnswersByQuiz(quizId);

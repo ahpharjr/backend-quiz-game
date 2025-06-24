@@ -1,6 +1,7 @@
 package com.ahphar.backend_quiz_game.services;
 
 import com.ahphar.backend_quiz_game.util.JwtUtil;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -8,9 +9,7 @@ import com.ahphar.backend_quiz_game.DTO.LoginRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.RegisterRequestDTO;
 import com.ahphar.backend_quiz_game.exception.EmailAlreadyExistsException;
 import com.ahphar.backend_quiz_game.exception.NameAlreadyExistsException;
-
 import java.util.Optional;
-
 @Service
 public class AuthService {
 
@@ -48,9 +47,4 @@ public class AuthService {
         return token;
     }
 
-//    public boolean login(LoginRequestDTO loginRequestDTO){
-//        return playerRepository.findByName(loginRequestDTO.getName())
-//        .map(user -> passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword()))
-//        .orElse(false);
-//    }
 }

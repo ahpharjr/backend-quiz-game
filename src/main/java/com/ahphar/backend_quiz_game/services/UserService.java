@@ -1,10 +1,11 @@
 package com.ahphar.backend_quiz_game.services;
 
 import com.ahphar.backend_quiz_game.DTO.RegisterRequestDTO;
-import com.ahphar.backend_quiz_game.DTO.UserResponseDTO;
 import com.ahphar.backend_quiz_game.mapper.UserMapper;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.repositories.UserRepository;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,12 @@ public class UserService {
 
         user.setUsername(newUsername);
         return userRepository.save(user);
+    }
+
+        public User getCurrentUser(Authentication auth) {
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
 }

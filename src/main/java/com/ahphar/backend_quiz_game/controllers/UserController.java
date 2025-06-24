@@ -8,7 +8,6 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import com.ahphar.backend_quiz_game.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +30,7 @@ public class UserController {
 
     @GetMapping("/user-info")
     public ResponseEntity<UserResponseDTO> getCurrentUser(Authentication authentication) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found "+username));
-
+        User user = userService.getCurrentUser(authentication);
         UserResponseDTO userResponseDTO = userMapper.toDto(user);
 
         return ResponseEntity.ok(userResponseDTO);

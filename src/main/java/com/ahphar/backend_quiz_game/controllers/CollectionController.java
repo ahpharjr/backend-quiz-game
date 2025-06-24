@@ -31,9 +31,7 @@ public class CollectionController {
 
     @GetMapping
     public ResponseEntity<List<Collection>> getFlashcardCollection(Authentication auth) {
-        String username = auth.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
+        User user = userService.getCurrentUser(auth);
         List<Collection> collections = collectionService.getFlashcardCollections(user.getUserId());
 
         return new ResponseEntity<>(collections, HttpStatus.OK);
@@ -41,16 +39,12 @@ public class CollectionController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addCardToCollection(Authentication auth, @RequestBody CollectionRequestDTO requestDTO) {
-        String username = auth.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
+        User user = userService.getCurrentUser(auth);
 
         long flashcardId = requestDTO.getFlashcardId();
         Flashcard flashcard = flashcardService.getFlashcard(flashcardId);
 
         List<Collection> existingCollections = collectionService.getFlashcardCollections(user.getUserId());
-//        boolean alreadyInCollection = existingCollections.stream()
-//                .anyMatch(c -> c.getFlashcard().getCardId() == (flashcardId));
 
         boolean alreadyInCollection = collectionService.isCardInCollection(existingCollections, flashcardId);
         if(alreadyInCollection) {
@@ -64,9 +58,7 @@ public class CollectionController {
 
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeCardFromCollection(Authentication auth, @RequestBody CollectionRequestDTO requestDTO) {
-        String username = auth.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
+        User user = userService.getCurrentUser(auth);
 
         long flashcardId = requestDTO.getFlashcardId();
 
