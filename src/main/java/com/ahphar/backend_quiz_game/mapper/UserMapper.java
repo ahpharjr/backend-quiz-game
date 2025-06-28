@@ -44,7 +44,6 @@ public class UserMapper {
             dto.setQuizSet(profile.getQuizSet());
             dto.setHighestScore(profile.getHighestScore());
             dto.setProfilePicture(profile.getProfilePicture());
-            dto.setCurrentQuizSet(profile.getCurrentQuizSet());
             dto.setCurrentPhase(profile.getCurrentPhase());
         }
 

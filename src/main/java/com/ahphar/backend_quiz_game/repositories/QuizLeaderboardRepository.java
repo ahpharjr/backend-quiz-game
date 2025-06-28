@@ -14,6 +14,6 @@ import com.ahphar.backend_quiz_game.models.User;
 public interface QuizLeaderboardRepository extends JpaRepository<QuizLeaderboard, Long> {
 
     List<QuizLeaderboard> findTop30ByQuizOrderByPointDescTimeTakenAsc(Quiz quiz);
-    Optional<QuizLeaderboard> findByQuizAndUser(Quiz quiz, User user);
+    Optional<QuizLeaderboard> findByQuizAndUser(Quiz quiz, User currentUser);
     
 }

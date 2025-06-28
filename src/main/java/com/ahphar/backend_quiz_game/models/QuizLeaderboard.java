@@ -17,6 +17,7 @@ public class QuizLeaderboard {
 
     private int point;
     private Long timeTaken;
+    private double correctPercentage;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

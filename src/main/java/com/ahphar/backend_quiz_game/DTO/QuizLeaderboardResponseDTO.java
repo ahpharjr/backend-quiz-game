@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 public class QuizLeaderboardResponseDTO {
     
-        private String username;
+    private String username;
     private int point;
     private Long timeTaken;
     private String profilePicture;

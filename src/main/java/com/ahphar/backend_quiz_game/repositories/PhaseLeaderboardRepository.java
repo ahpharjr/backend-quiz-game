@@ -8,10 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import com.ahphar.backend_quiz_game.models.Phase;
 import com.ahphar.backend_quiz_game.models.PhaseLeaderboard;
+import com.ahphar.backend_quiz_game.models.Quiz;
 import com.ahphar.backend_quiz_game.models.User;
 
 @Repository
 public interface PhaseLeaderboardRepository extends JpaRepository<PhaseLeaderboard, Long> {
     List<PhaseLeaderboard> findTop30ByPhaseOrderByPointDescTimeTakenAsc(Phase phase);
     Optional<PhaseLeaderboard> findByPhaseAndUser(Phase phase, User user);
+    Optional<Quiz> findByUserAndPhase(User currentUser, Phase phase);
 }

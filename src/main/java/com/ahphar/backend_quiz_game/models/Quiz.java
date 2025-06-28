@@ -1,5 +1,10 @@
 package com.ahphar.backend_quiz_game.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,4 +22,10 @@ public class Quiz {
     @OneToOne
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
+
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<QuizLeaderboard> quizLeaderboards = new ArrayList<>();
+
+
 }

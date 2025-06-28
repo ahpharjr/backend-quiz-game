@@ -4,7 +4,6 @@ import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.models.UserProfile;
 import com.ahphar.backend_quiz_game.repositories.UserProfileRepository;
 import com.ahphar.backend_quiz_game.repositories.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -38,8 +37,6 @@ public class UserControllerTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private User testUser;
 
     @BeforeAll
@@ -62,7 +59,7 @@ public class UserControllerTest {
         profile.setTimeSpent(5000L);
         profile.setHighestScore(1500);
         profile.setProfilePicture("avatar.png");
-        profile.setCurrentQuizSet(2);
+        //profile.setCurrentQuizSet(2);
         profile.setCurrentPhase(1);
 
         userProfileRepository.save(profile); // will now work correctly
