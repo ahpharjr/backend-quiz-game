@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.controllers;
 
+import com.ahphar.backend_quiz_game.DTO.UpdateProfilePictureRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.UpdateUsernameRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.UserResponseDTO;
 import com.ahphar.backend_quiz_game.mapper.UserMapper;
@@ -8,11 +9,13 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import com.ahphar.backend_quiz_game.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -57,6 +60,17 @@ public class UserController {
         }
     }
 
+    @PutMapping("/update-profile-picture")
+    public ResponseEntity<?> updateProfilePicture(Authentication auth,@Validated @RequestBody UpdateProfilePictureRequestDTO requestDTO){
+        User user = userService.getCurrentUser(auth);
+        userService.updateProfilePicture(user, requestDTO.getProfilePicture());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Profile picture updated successfully.");
+            response.put("profilePicture", requestDTO.getProfilePicture());
+
+            return ResponseEntity.ok(response);
+    }
 
 
 }

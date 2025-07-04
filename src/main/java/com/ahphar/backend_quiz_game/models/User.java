@@ -6,11 +6,15 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table (name = "users")
 public class User {
@@ -23,6 +27,8 @@ public class User {
 
     @Column(unique = true)
     private String email;
+
+    @Column(nullable =  true)
     private String password;
     private LocalDateTime registeredTime;
 

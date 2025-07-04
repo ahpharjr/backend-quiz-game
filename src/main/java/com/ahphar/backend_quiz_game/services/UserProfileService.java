@@ -6,6 +6,7 @@ import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.models.UserProfile;
 import com.ahphar.backend_quiz_game.repositories.QuizRepository;
 import com.ahphar.backend_quiz_game.repositories.UserProfileRepository;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +30,7 @@ public class UserProfileService {
         profile.setTimeSpent(0L);
         profile.setQuizSet(0);
         profile.setHighestScore(0);
-        profile.setProfilePicture("default.png");
+        profile.setProfilePicture("profile1.png");
         profile.setCurrentPhase(1);
         //profile.setCurrentQuizSet(1);
 
@@ -38,7 +39,6 @@ public class UserProfileService {
 
     public void updateProfileOnQuizSubmission(User user, Quiz quiz, SubmitRequestDTO dto, boolean isNewQuizAttempt, double existingCorrectPercentage) {
         
-        System.out.println("in profile update method");
         UserProfile profile = user.getProfile();
 
         // Always update time spent and highest score
@@ -50,10 +50,6 @@ public class UserProfileService {
 
         int bonusXp = 0;
 
-        System.out.println("before checking condition");
-
-        System.out.println("new %: "+ dto.getCorrectPercentage());
-        System.out.println("existing %" + existingCorrectPercentage);
         if (isNewQuizAttempt) {
             // Full bonus for first attempt
             bonusXp = (int) Math.round(dto.getCorrectPercentage());
@@ -78,11 +74,8 @@ public class UserProfileService {
             bonusXp = (int) Math.round(dto.getCorrectPercentage() - existingCorrectPercentage);
             profile.setUserXp(profile.getUserXp() + bonusXp);
 
-            System.out.println("Updated user profile xp");
-
             updateLevel(profile); 
         }
-        System.out.println("after checking condtion");
     }
 
     private void updateLevel(UserProfile profile) {
