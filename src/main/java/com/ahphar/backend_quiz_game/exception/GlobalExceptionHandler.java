@@ -48,10 +48,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserNotFoundException(UserNotFoundException ex){
 
-        log.warn("User doesn't exist: {}", ex.getMessage());
+        log.warn("User with this email doesn't exist: {}", ex.getMessage());
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", "User doesn't exist!");
+        errors.put("message", "User with this email doesn't exist!");
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }

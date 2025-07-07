@@ -7,6 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ahphar.backend_quiz_game.DTO.EmailCodeDTO;
 import com.ahphar.backend_quiz_game.DTO.LoginRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.RegisterRequestDTO;
-import com.ahphar.backend_quiz_game.DTO.ResendCodeRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.ResetPasswordRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.CodeRequestDTO;
 import com.ahphar.backend_quiz_game.exception.EmailAlreadyExistsException;
 import com.ahphar.backend_quiz_game.exception.NameAlreadyExistsException;
 import com.ahphar.backend_quiz_game.exception.UserNotFoundException;
@@ -82,14 +84,13 @@ public class AuthController {
         if (!dto.getCode().equals(user.getVerificationCode())) {
             return ResponseEntity.badRequest().body("Invalid code.");
         }
-        System.out.println("before update : " );
 
         userService.completeEmailVerification(user);
         return ResponseEntity.ok("Email verified successfully");
     }
 
     @PostMapping("/resend-email-verification-code")
-    public ResponseEntity<?> resendVerificationCode(@RequestBody ResendCodeRequestDTO dto) {
+    public ResponseEntity<?> resendVerificationCode(@RequestBody CodeRequestDTO dto) {
         
         User user = userService.findByEmail(dto.getEmail())
           .orElseThrow(() -> new UserNotFoundException("User not found with email: " + dto.getEmail()));
@@ -103,7 +104,39 @@ public class AuthController {
         return ResponseEntity.ok("Verification code resent successfully.");
     }
 
+    @PostMapping("/send-reset-password-code")
+    public ResponseEntity<String> sendResetPasswordCode(@Validated @RequestBody CodeRequestDTO dto){
+        User user = userService.findByEmail(dto.getEmail())
+            .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
 
+        userService.sendResetPasswordCode(user);
+        return ResponseEntity.ok("Send reset password code successfully.");  
+    }
+
+    @PostMapping("/verified-reset-password-code")
+    public ResponseEntity<String> verifiedResetPasswordCode(@Validated @RequestBody EmailCodeDTO dto){
+        User user = userService.findByEmail(dto.getEmail())
+            .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
+
+        if (user.getCodeExpiryTime().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Verification code expired.");
+        }
+
+        if (!dto.getCode().equals(user.getVerificationCode())) {
+            return ResponseEntity.badRequest().body("Invalid code.");
+        }
+
+        return ResponseEntity.ok("Verified reset password code successfully.");
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@Validated @RequestBody ResetPasswordRequestDTO dto){
+        User user = userService.findByEmail(dto.getEmail())
+            .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
+
+        userService.resetPassword(user, dto.getNewPassword());
+        return ResponseEntity.ok("Update password successfully!");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequestDTO loginRequestDTO) {

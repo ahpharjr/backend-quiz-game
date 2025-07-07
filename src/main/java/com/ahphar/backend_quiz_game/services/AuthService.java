@@ -42,18 +42,6 @@ public class AuthService {
 
     }
 
-    // public Optional<String> authenticate(LoginRequestDTO loginRequestDTO) {
-
-    //     Optional<String> token = userService
-    //             .findByUsername(loginRequestDTO.getUsername())
-    //             .filter(u -> passwordEncoder.matches(loginRequestDTO.getPassword() ,
-    //                     u.getPassword()))
-    //             .filter(User::isVerified)
-    //             .map(u-> jwtUtil.generateToken(u.getUsername()));
-
-    //     return token;
-    // }
-
     public String authenticateOrThrow(LoginRequestDTO loginRequestDTO) {
         User user = userService.findByUsername(loginRequestDTO.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

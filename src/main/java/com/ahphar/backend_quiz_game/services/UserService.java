@@ -52,22 +52,6 @@ public class UserService {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
-
-    // public void save(RegisterRequestDTO requestDTO) {
-
-    //     User user = userMapper.toModel(requestDTO);
-    //     String code = generateVerificationCode();
-    //     user.setVerificationCode(code);
-    //     user.setCodeExpiryTime(LocalDateTime.now().plusMinutes(15));
-    //     user.setVerified(false);
-
-    //     User savedUser = userRepository.save(user);
-
-    //     userProfileService.createDefaultProfile(savedUser);
-
-    //     emailService.sendVerificationCodeEmail(user.getEmail(), code);
-
-    // }
     public void save(RegisterRequestDTO requestDTO) {
         User user = userMapper.toModel(requestDTO);
         User savedUser = userRepository.save(user);
@@ -85,6 +69,20 @@ public class UserService {
 
         userRepository.save(user);
         emailService.sendVerificationCodeEmail(user.getEmail(), code);
+    }
+
+    public void sendResetPasswordCode(User user){
+        String code = generateVerificationCode();
+        user.setVerificationCode(code);
+        user.setCodeExpiryTime(LocalDateTime.now().plusMinutes(10));
+        
+        userRepository.save(user);
+        emailService.sendResetPasswordCode(user.getEmail(), code);
+    }
+
+    public void resetPassword(User user, String newPassword){
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 
