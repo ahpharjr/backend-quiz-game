@@ -3,6 +3,7 @@ package com.ahphar.backend_quiz_game.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,5 +43,16 @@ public class GlobalExceptionHandler {
         errors.put("message", "Player name already taken!");
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFoundException(UserNotFoundException ex){
+
+        log.warn("User doesn't exist: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "User doesn't exist!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 }

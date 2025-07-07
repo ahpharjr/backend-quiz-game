@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService {
@@ -20,12 +21,15 @@ public class UserService {
     private final UserMapper userMapper;
     private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UserService(UserRepository playerRepository, UserMapper playerMapper, UserProfileService userProfileService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository playerRepository, UserMapper playerMapper, 
+                        UserProfileService userProfileService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userRepository = playerRepository;
         this.userMapper = playerMapper;
         this.userProfileService = userProfileService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     public boolean existsByUsername(String username) {
@@ -44,14 +48,45 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public String generateVerificationCode() {
+        return String.format("%06d", new Random().nextInt(999999));
+    }
 
+
+    // public void save(RegisterRequestDTO requestDTO) {
+
+    //     User user = userMapper.toModel(requestDTO);
+    //     String code = generateVerificationCode();
+    //     user.setVerificationCode(code);
+    //     user.setCodeExpiryTime(LocalDateTime.now().plusMinutes(15));
+    //     user.setVerified(false);
+
+    //     User savedUser = userRepository.save(user);
+
+    //     userProfileService.createDefaultProfile(savedUser);
+
+    //     emailService.sendVerificationCodeEmail(user.getEmail(), code);
+
+    // }
     public void save(RegisterRequestDTO requestDTO) {
         User user = userMapper.toModel(requestDTO);
         User savedUser = userRepository.save(user);
 
         userProfileService.createDefaultProfile(savedUser);
 
+        generateAndSendVerificationCode(savedUser);
     }
+
+    public void generateAndSendVerificationCode(User user) {
+        String code = generateVerificationCode();
+        user.setVerificationCode(code);
+        user.setCodeExpiryTime(LocalDateTime.now().plusMinutes(15));
+        user.setVerified(false);
+
+        userRepository.save(user);
+        emailService.sendVerificationCodeEmail(user.getEmail(), code);
+    }
+
 
     public User createNewUserIfNotExists(String email, String username) {
 
@@ -64,8 +99,10 @@ public class UserService {
             User user = new User();
             user.setEmail(email);
             user.setUsername(username);
+            // user.setPassword(null);
             user.setPassword(passwordEncoder.encode("password@123")+ "12");
             user.setRegisteredTime(LocalDateTime.now());
+            user.setVerified(true);
 
             // Save user first to generate ID
             user = userRepository.save(user); 
@@ -112,6 +149,13 @@ public class UserService {
     String username = auth.getName();
     return userRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    public void completeEmailVerification(User user) {
+        user.setVerified(true);
+        user.setVerificationCode(null);
+        user.setCodeExpiryTime(null);
+        userRepository.save(user);
     }
 
 }

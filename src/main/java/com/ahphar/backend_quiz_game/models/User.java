@@ -30,7 +30,11 @@ public class User {
 
     @Column(nullable =  true)
     private String password;
+
     private LocalDateTime registeredTime;
+    private boolean isVerified;
+    private String verificationCode;
+    private LocalDateTime codeExpiryTime;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @JsonIgnore
