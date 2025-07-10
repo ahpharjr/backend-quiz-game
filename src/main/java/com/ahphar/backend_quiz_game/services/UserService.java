@@ -81,7 +81,10 @@ public class UserService {
     }
 
     public void resetPassword(User user, String newPassword){
+
         user.setPassword(passwordEncoder.encode(newPassword));
+        user.setVerificationCode(null);
+        user.setCodeExpiryTime(null);
         userRepository.save(user);
     }
 
@@ -97,7 +100,6 @@ public class UserService {
             User user = new User();
             user.setEmail(email);
             user.setUsername(username);
-            // user.setPassword(null);
             user.setPassword(passwordEncoder.encode("password@123")+ "12");
             user.setRegisteredTime(LocalDateTime.now());
             user.setVerified(true);

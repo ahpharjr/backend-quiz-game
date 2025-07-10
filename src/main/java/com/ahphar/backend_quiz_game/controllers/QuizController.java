@@ -1,6 +1,5 @@
 package com.ahphar.backend_quiz_game.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +10,7 @@ import com.ahphar.backend_quiz_game.DTO.SubmitResponseDTO;
 import com.ahphar.backend_quiz_game.models.Answer;
 import com.ahphar.backend_quiz_game.models.Question;
 import com.ahphar.backend_quiz_game.models.User;
+import com.ahphar.backend_quiz_game.services.AchievementService;
 import com.ahphar.backend_quiz_game.services.QuizService;
 import com.ahphar.backend_quiz_game.services.UserService;
 
@@ -22,10 +22,12 @@ public class QuizController {
 
     private final QuizService quizService;
     private final UserService userService;
+    private final AchievementService achievementService;
 
-    public QuizController(@Autowired QuizService quizService, @Autowired UserService userService) {
+    public QuizController(QuizService quizService, UserService userService, AchievementService achievementService) {
         this.quizService = quizService;
         this.userService = userService;
+        this.achievementService = achievementService;
     }
     
     @GetMapping("/{quizId}/questions")
@@ -50,6 +52,7 @@ public class QuizController {
 
         User currentUser = userService.getCurrentUser(authentication);
         SubmitResponseDTO response = quizService.submitQuiz(currentUser, quizId, requestDTO);
+        achievementService.evaluateAchievements(currentUser);
         return ResponseEntity.ok(response);
     }
 

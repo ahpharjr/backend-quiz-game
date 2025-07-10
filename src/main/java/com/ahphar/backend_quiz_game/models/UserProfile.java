@@ -27,7 +27,6 @@ public class UserProfile {
     private int quizSet;
     private int highestScore;
     private String profilePicture;
-    // private int currentQuizSet;
-    private int currentPhase;
+    private int currentPhase; 
 
 }

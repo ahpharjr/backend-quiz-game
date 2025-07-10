@@ -15,5 +15,5 @@ public interface QuizLeaderboardRepository extends JpaRepository<QuizLeaderboard
 
     List<QuizLeaderboard> findTop30ByQuizOrderByPointDescTimeTakenAsc(Quiz quiz);
     Optional<QuizLeaderboard> findByQuizAndUser(Quiz quiz, User currentUser);
-    
+    Boolean existsByUserAndQuiz(User user, Quiz quiz);
 }

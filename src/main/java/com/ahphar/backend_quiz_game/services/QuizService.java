@@ -134,14 +134,14 @@ public class QuizService {
         existing.setPoint(dto.getPoint());
         existing.setTimeTaken(dto.getTimeTaken());
 
-        // ✅ Update correctPercentage if it's improved
+        //  Update correctPercentage if it's improved
         if (isBetterCorrectPercentage) {
             existing.setCorrectPercentage(dto.getCorrectPercentage());
         }
 
         quizLeaderboardRepo.save(existing);
 
-        // ✅ Update phase leaderboard only for score/time improvements
+        //  Update phase leaderboard only for score/time improvements
         if (isBetterScore || isEqualScoreFasterTime) {
             int additionalPoints = dto.getPoint() - previousPoints;
             long additionalTime = dto.getTimeTaken() - previousTime;
