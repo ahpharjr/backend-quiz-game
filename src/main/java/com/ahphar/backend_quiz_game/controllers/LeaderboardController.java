@@ -20,8 +20,13 @@ import com.ahphar.backend_quiz_game.services.PhaseService;
 import com.ahphar.backend_quiz_game.services.QuizService;
 import com.ahphar.backend_quiz_game.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/leaderboard")
+@Tag(name = "Leaderboard", description = "APIs for quiz and phase leaderboards")
 public class LeaderboardController {
     
     private final LeaderboardService leaderboardService;
@@ -36,7 +41,12 @@ public class LeaderboardController {
         this.quizService = quizService;
     }
 
-    @PostMapping("/phases/{phaseId}/add-leaderboard")
+    @Operation(
+        summary = "Add user to phase leaderboard",
+        description = "Creates a phase leaderboard entry for the authenticated user if one does not already exist.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/phases/{phaseId}")
     public ResponseEntity<String> addPhaseLeaderboard(@PathVariable Long phaseId, Authentication auth){
         User user = userService.getCurrentUser(auth);
         Phase phase = phaseService.getPhaseById(phaseId);
@@ -45,6 +55,11 @@ public class LeaderboardController {
         return ResponseEntity.ok("Phase leaderboard entry created");
     }
 
+    @Operation(
+        summary = "Get top users in a phase leaderboard",
+        description = "Returns a list of top users for the given phase, sorted by their scores and time.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/phases/{phaseId}")
     public ResponseEntity<List<PhaseLeaderboardResponseDTO>> getTopPhaseLeaderboard(@PathVariable Long phaseId) {
         List<PhaseLeaderboardResponseDTO> topPhaseLeaderboard = leaderboardService.getTopPhaseLeaderboard(phaseId);
@@ -52,7 +67,12 @@ public class LeaderboardController {
         return ResponseEntity.ok(topPhaseLeaderboard);
     }
 
-    @PostMapping("/quizzes/{quizId}/add-leaderboard")
+    @Operation(
+        summary = "Add user to quiz leaderboard",
+        description = "Creates a quiz leaderboard entry for the authenticated user if one does not already exist.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/quizzes/{quizId}")
     public ResponseEntity<String> addQuizLeaderboard(@PathVariable Long quizId, Authentication auth){
         User user = userService.getCurrentUser(auth);
         Quiz quiz = quizService.getQuizById(quizId);
@@ -61,6 +81,11 @@ public class LeaderboardController {
         return ResponseEntity.ok("Quiz leaderboard entry created");
     }
 
+    @Operation(
+        summary = "Get top users in a quiz leaderboard",
+        description = "Returns a list of top users for the given quiz, sorted by their scores and time.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/quizzes/{quizId}")
     public ResponseEntity<List<QuizLeaderboardResponseDTO>> getTopQuizLeaderboard(@PathVariable Long quizId) {
         List<QuizLeaderboardResponseDTO> topQuizLeaderboard = leaderboardService.getTopQuizLeaderboard(quizId);

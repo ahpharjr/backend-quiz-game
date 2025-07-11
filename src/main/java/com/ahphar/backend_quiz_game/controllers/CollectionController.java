@@ -7,6 +7,11 @@ import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.services.CollectionService;
 import com.ahphar.backend_quiz_game.services.FlashcardService;
 import com.ahphar.backend_quiz_game.services.UserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/collections")
+@Tag(name = "Collections", description = "Manage flashcard collections for the authenticated user")
 public class CollectionController {
 
     private final CollectionService collectionService;
@@ -28,6 +34,11 @@ public class CollectionController {
         this.flashcardService = flashcardService;
     }
 
+    @Operation(
+        summary = "Get flashcard collection",
+        description = "Retrieves all flashcards saved in the current user's collection.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping
     public ResponseEntity<List<Collection>> getFlashcardCollection(Authentication auth) {
         User user = userService.getCurrentUser(auth);
@@ -36,7 +47,12 @@ public class CollectionController {
         return new ResponseEntity<>(collections, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @Operation(
+        summary = "Add flashcard to collection",
+        description = "Adds a flashcard to the authenticated user's collection. If the card is already added, a 400 response is returned.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping()
     public ResponseEntity<String> addCardToCollection(Authentication auth, @RequestBody CollectionRequestDTO requestDTO) {
         User user = userService.getCurrentUser(auth);
 
@@ -55,7 +71,12 @@ public class CollectionController {
         return ResponseEntity.ok("Card added to collection successfully");
     }
 
-    @DeleteMapping("/remove")
+    @Operation(
+        summary = "Remove flashcard from collection",
+        description = "Removes a flashcard from the authenticated user's collection by flashcard ID.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping()
     public ResponseEntity<String> removeCardFromCollection(Authentication auth, @RequestBody CollectionRequestDTO requestDTO) {
         User user = userService.getCurrentUser(auth);
 

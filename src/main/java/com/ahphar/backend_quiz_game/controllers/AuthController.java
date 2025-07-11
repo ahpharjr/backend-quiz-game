@@ -31,6 +31,9 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
@@ -40,6 +43,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "APIs for user registration, login, and password reset.")
 public class AuthController {
 
     private final AuthService authService;
@@ -56,6 +60,7 @@ public class AuthController {
         this.userService = userService;
     }
     
+    @Operation(summary = "Register a new user")
     @PostMapping("/register")
     public ResponseEntity<?> register (@Validated @RequestBody RegisterRequestDTO requestDTO){
         try {
@@ -68,7 +73,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/verify-email-code")
+    @Operation(summary = "Verify email with code")
+    @PostMapping("/verify-email")
     public ResponseEntity<?> verifyEmail(@RequestBody EmailCodeDTO dto) {
         User user = userService.findByEmail(dto.getEmail())
         .orElseThrow(() -> new UserNotFoundException("User not found with email: " + dto.getEmail()));
@@ -89,7 +95,8 @@ public class AuthController {
         return ResponseEntity.ok("Email verified successfully");
     }
 
-    @PostMapping("/resend-email-verification-code")
+    @Operation(summary = "Resend email verification code")
+    @PostMapping("/resend-email-verification")
     public ResponseEntity<?> resendVerificationCode(@RequestBody CodeRequestDTO dto) {
         
         User user = userService.findByEmail(dto.getEmail())
@@ -104,7 +111,8 @@ public class AuthController {
         return ResponseEntity.ok("Verification code resent successfully.");
     }
 
-    @PostMapping("/send-reset-password-code")
+    @Operation(summary = "Send password reset code to email")
+    @PostMapping("/password-reset/send-code")
     public ResponseEntity<String> sendResetPasswordCode(@Validated @RequestBody CodeRequestDTO dto){
         User user = userService.findByEmail(dto.getEmail())
             .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
@@ -113,7 +121,8 @@ public class AuthController {
         return ResponseEntity.ok("Send reset password code successfully.");  
     }
 
-    @PostMapping("/verified-reset-password-code")
+    @Operation(summary = "Verify password reset code")
+    @PostMapping("/password-reset/verify-code")
     public ResponseEntity<String> verifiedResetPasswordCode(@Validated @RequestBody EmailCodeDTO dto){
         User user = userService.findByEmail(dto.getEmail())
             .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
@@ -129,7 +138,8 @@ public class AuthController {
         return ResponseEntity.ok("Verified reset password code successfully.");
     }
 
-    @PutMapping("/reset-password")
+    @Operation(summary = "Reset password")
+    @PutMapping("/password-reset")
     public ResponseEntity<String> resetPassword(@Validated @RequestBody ResetPasswordRequestDTO dto){
         User user = userService.findByEmail(dto.getEmail())
             .orElseThrow(()-> new UserNotFoundException("User not found with this email: "+ dto.getEmail()));
@@ -138,6 +148,7 @@ public class AuthController {
         return ResponseEntity.ok("Update password successfully!");
     }
 
+    @Operation(summary = "Login with username and password")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
@@ -150,7 +161,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/google-login")
+    @Operation(summary = "Login with Google ID token")
+    @PostMapping("/login/google")
     public ResponseEntity<?> loginWithGoogle(@RequestBody Map<String, String> body) {
         String idToken = body.get("idToken");
         System.out.println("google client id : "+ googleClientId);

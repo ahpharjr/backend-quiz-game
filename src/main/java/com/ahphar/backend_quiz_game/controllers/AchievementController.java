@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahphar.backend_quiz_game.DTO.AchievementResponseDTO;
@@ -15,8 +14,12 @@ import com.ahphar.backend_quiz_game.models.UserAchievement;
 import com.ahphar.backend_quiz_game.services.AchievementService;
 import com.ahphar.backend_quiz_game.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/achievements")
+@Tag(name = "Achievements", description = "Operations related to achievements")
 public class AchievementController {
 
     private final AchievementService achievementService;
@@ -27,7 +30,12 @@ public class AchievementController {
         this.userService = userService;
     }
     
-    @GetMapping()
+    @Operation(
+        summary = "Get all achievements",
+        description = "Returns a list of all possible achievements in the quiz game.",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @GetMapping("/achievements")
     public ResponseEntity<List<AchievementResponseDTO>> getAllAchievements(){
         
         List<AchievementResponseDTO> responseDTOs = achievementService.getAllAchievements();
@@ -35,7 +43,12 @@ public class AchievementController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    @GetMapping("/user-achievements")
+    @Operation(
+        summary = "Get achievements of current user",
+        description = "Returns a list of achievements unlocked by the currently authenticated user.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/users/me/achievements")
     public ResponseEntity<List<UserAchievement>> getUserAchievements(Authentication authentication){
         User user = userService.getCurrentUser(authentication);
         List<UserAchievement> achievements = achievementService.getUserAchievements(user);
@@ -43,7 +56,12 @@ public class AchievementController {
         return ResponseEntity.ok(achievements);
     }
 
-    @GetMapping("/user-achievements-status")
+    @Operation(
+        summary = "Get achievement status of current user",
+        description = "Returns the progress or status of all achievements for the authenticated user, including locked/unlocked state.",
+        security = @SecurityRequirement(name = "BearerAuth")
+    )
+    @GetMapping("/users/me/achievement-status")
     public ResponseEntity<List<AchievementStatusDTO>> getAchievementStatus(Authentication authentication) {
         User user = userService.getCurrentUser(authentication);
 
