@@ -55,4 +55,27 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
+
+    @ExceptionHandler(PhaseNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePhaseNotFoundException(PhaseNotFoundException ex){
+
+        log.warn("Phase not found: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Phase not found!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(TopicNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTopicNotFoundException(TopicNotFoundException ex){
+
+        log.warn("Topic not found: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Topic not found!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
 }

@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ahphar.backend_quiz_game.DTO.TopicRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
+import com.ahphar.backend_quiz_game.exception.TopicNotFoundException;
+import com.ahphar.backend_quiz_game.mapper.TopicMapper;
 import com.ahphar.backend_quiz_game.models.Topic;
 import com.ahphar.backend_quiz_game.repositories.TopicRepository;
 
@@ -11,12 +15,44 @@ import com.ahphar.backend_quiz_game.repositories.TopicRepository;
 public class TopicService {
 
     private TopicRepository topicRepository;
+    private final TopicMapper topicMapper;
 
-    public TopicService(TopicRepository topicRepository) {
+    public TopicService(TopicRepository topicRepository, TopicMapper topicMapper) {
         this.topicRepository = topicRepository;
+        this.topicMapper = topicMapper;
     }
 
     public List<Topic> getAllTopics(long phaseId) {
         return topicRepository.findByPhase_PhaseId(phaseId);
+    }
+
+    public List<TopicResponseDTO> getAllTopics(){
+        List<Topic> topics = topicRepository.findAll();
+        return topics.stream()
+                .map(topicMapper::toResponseDTO)
+                .toList();
+    }
+
+    public void createTopic(TopicRequestDTO requestDTO){
+            Topic topic = topicMapper.toModel(requestDTO);
+
+        topicRepository.save(topic);
+    }
+
+    public void updateTopic(Long topicId, TopicRequestDTO requestDTO){
+        Topic existingTopic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
+
+        existingTopic.setName(requestDTO.getName());
+        existingTopic.setImage(requestDTO.getImage());
+        existingTopic.setDesc(requestDTO.getDesc());
+
+        topicRepository.save(existingTopic);
+    }
+
+    public void deleteTopic(Long topicId){
+        Topic existingTopic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
+        topicRepository.delete(existingTopic);
     }
 }

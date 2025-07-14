@@ -20,18 +20,7 @@ public class SecurityConfig {
     // public SecurityConfig(CustomOAuth2SuccessHandler successHandler){
     //     this.successHandler = successHandler;
     // }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-        http
-            .authorizeHttpRequests(authorizeRequests ->
-                authorizeRequests.requestMatchers("/", "/auth/**", "/v3/api-docs","/swagger-ui/**").permitAll()
-                        .anyRequest().authenticated())
-                        .csrf(AbstractHttpConfigurer::disable)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-
+    
     // @Bean
     // public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
     //     http
@@ -45,6 +34,18 @@ public class SecurityConfig {
     //         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     //     return http.build();
     // }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+        http
+            .authorizeHttpRequests(authorizeRequests ->
+                authorizeRequests.requestMatchers("/", "/auth/**", "/v3/api-docs","/admin/**").permitAll()
+                        .anyRequest().authenticated())
+                        .csrf(AbstractHttpConfigurer::disable)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
+    }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
