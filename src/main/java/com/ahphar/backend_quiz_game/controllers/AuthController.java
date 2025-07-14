@@ -65,7 +65,7 @@ public class AuthController {
     public ResponseEntity<?> register (@Validated @RequestBody RegisterRequestDTO requestDTO){
         try {
             authService.register(requestDTO);
-            return ResponseEntity.ok("Register successfully");
+            return ResponseEntity.ok("Register successfully. Please verify your email.");
         } catch (EmailAlreadyExistsException e) {
             return ResponseEntity.badRequest().body("Email already exists");
         } catch (NameAlreadyExistsException e){
