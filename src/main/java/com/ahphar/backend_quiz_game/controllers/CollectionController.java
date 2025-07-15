@@ -1,6 +1,7 @@
 package com.ahphar.backend_quiz_game.controllers;
 
 import com.ahphar.backend_quiz_game.DTO.CollectionRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.FlashcardResponseDTO;
 import com.ahphar.backend_quiz_game.models.Collection;
 import com.ahphar.backend_quiz_game.models.Flashcard;
 import com.ahphar.backend_quiz_game.models.User;
@@ -40,9 +41,9 @@ public class CollectionController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
-    public ResponseEntity<List<Collection>> getFlashcardCollection(Authentication auth) {
+    public ResponseEntity<List<FlashcardResponseDTO>> getFlashcardCollection(Authentication auth) {
         User user = userService.getCurrentUser(auth);
-        List<Collection> collections = collectionService.getFlashcardCollections(user.getUserId());
+        List<FlashcardResponseDTO> collections = collectionService.getCollections(user.getUserId());
 
         return new ResponseEntity<>(collections, HttpStatus.OK);
     }

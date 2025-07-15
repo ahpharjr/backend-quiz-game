@@ -18,10 +18,14 @@ import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
 import com.ahphar.backend_quiz_game.models.Phase;
 import com.ahphar.backend_quiz_game.services.PhaseService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin/phases")
+@Tag(name = "Admin Phase Management", description = "APIs for managing phases in the quiz game")
 public class AdminPhaseController {
 
     private final PhaseService phaseService;
@@ -30,12 +34,22 @@ public class AdminPhaseController {
         this.phaseService = phaseService;
     }
     
+    @Operation(
+        summary = "Get all phases", 
+        description = "Retrieve a list of all phases in the quiz game",
+        security = @SecurityRequirement(name = "bearerAuth")
+        )
     @GetMapping
     public ResponseEntity<List<Phase>> getAllPhases() {
         List<Phase> phases = phaseService.getAllPhases();
         return ResponseEntity.ok(phases);
     }
 
+    @Operation(
+        summary = "Create a new phase",
+        description = "Creates a new phase in the quiz game. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PostMapping
     public ResponseEntity<MessageResponse> createPhase(@Valid @RequestBody PhaseRequestDTO requestDto) {
         
@@ -43,6 +57,11 @@ public class AdminPhaseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Phase created successfully"));
     }
 
+    @Operation(
+        summary = "Update an existing phase",
+        description = "Updates the details of an existing phase. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PutMapping("/{phaseId}")
     public ResponseEntity<MessageResponse> updatePhase(@PathVariable Long phaseId, @Valid @RequestBody PhaseRequestDTO requestDto) {
         
@@ -50,6 +69,11 @@ public class AdminPhaseController {
         return ResponseEntity.ok(new MessageResponse("Phase updated successfully"));
     }
 
+    @Operation(
+        summary = "Delete a phase",
+        description = "Deletes an existing phase and all the related topics from the quiz game. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @DeleteMapping("/{phaseId}")
     public ResponseEntity<MessageResponse> deletePhase(@PathVariable Long phaseId) {
         

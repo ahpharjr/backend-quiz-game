@@ -3,7 +3,6 @@ package com.ahphar.backend_quiz_game.services;
 import com.ahphar.backend_quiz_game.util.JwtUtil;
 
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +10,8 @@ import com.ahphar.backend_quiz_game.DTO.LoginRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.RegisterRequestDTO;
 import com.ahphar.backend_quiz_game.exception.EmailAlreadyExistsException;
 import com.ahphar.backend_quiz_game.exception.NameAlreadyExistsException;
+import com.ahphar.backend_quiz_game.exception.UserNotFoundException;
 import com.ahphar.backend_quiz_game.models.User;
-
-// import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -44,7 +42,7 @@ public class AuthService {
 
     public String authenticateOrThrow(LoginRequestDTO loginRequestDTO) {
         User user = userService.findByUsername(loginRequestDTO.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("Invalid password");

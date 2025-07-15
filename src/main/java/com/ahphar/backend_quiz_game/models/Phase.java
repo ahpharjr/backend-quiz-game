@@ -1,4 +1,8 @@
 package com.ahphar.backend_quiz_game.models;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,4 +24,7 @@ public class Phase {
     @Column(name = "`desc`")
     private String desc;
     
+    @OneToMany(mappedBy = "phase", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Topic> topics;
 }

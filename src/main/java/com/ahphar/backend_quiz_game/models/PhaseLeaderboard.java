@@ -25,4 +25,6 @@ public class PhaseLeaderboard {
     @ManyToOne
     @JoinColumn(name = "phase_id", nullable = false)
     private Phase phase;
+
+    
 }

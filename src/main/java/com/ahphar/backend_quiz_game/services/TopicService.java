@@ -3,6 +3,7 @@ package com.ahphar.backend_quiz_game.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ahphar.backend_quiz_game.DTO.TopicRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
@@ -24,6 +25,13 @@ public class TopicService {
 
     public List<Topic> getAllTopics(long phaseId) {
         return topicRepository.findByPhase_PhaseId(phaseId);
+    }
+    
+    public List<TopicResponseDTO> getTopicByPhaseId(Long phaseId){
+        List<Topic> topics = topicRepository.findByPhase_PhaseId(phaseId);
+        return topics.stream()
+                .map(topicMapper::toResponseDTO)
+                .toList();
     }
 
     public List<TopicResponseDTO> getAllTopics(){
@@ -50,6 +58,7 @@ public class TopicService {
         topicRepository.save(existingTopic);
     }
 
+    @Transactional
     public void deleteTopic(Long topicId){
         Topic existingTopic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));

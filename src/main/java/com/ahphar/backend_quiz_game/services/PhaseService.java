@@ -3,6 +3,7 @@ package com.ahphar.backend_quiz_game.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
 import com.ahphar.backend_quiz_game.mapper.PhaseMapper;
@@ -43,6 +44,7 @@ public class PhaseService {
         phaseRepository.save(updatedPhase);
     }
 
+    @Transactional
     public void deletePhase(Long phaseId){
         Phase existingPhase = getPhaseById(phaseId);
         phaseRepository.delete(existingPhase);

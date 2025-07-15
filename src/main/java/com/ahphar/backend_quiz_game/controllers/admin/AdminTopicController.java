@@ -1,6 +1,7 @@
 package com.ahphar.backend_quiz_game.controllers.admin;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,28 +20,62 @@ import com.ahphar.backend_quiz_game.DTO.TopicRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
 import com.ahphar.backend_quiz_game.services.TopicService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
-@RequestMapping("/admin/topics")
+@RequestMapping("/admin")
+@Tag(name = "Admin Topic Management", description = "APIs for managing topics in the quiz game")
 public class AdminTopicController {
 
     private final TopicService topicService;
     public AdminTopicController(TopicService topicService) {
         this.topicService = topicService;
     }
+
+    @Operation(
+        summary = "Get topics by phase ID",
+        description = "Retrieves all topics associated with a specific phase ID.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/phases/{phaseId}/topics")
+    public ResponseEntity<?> getTopicsByPhase(@PathVariable Long phaseId){
+        List<TopicResponseDTO> topics = topicService.getTopicByPhaseId(phaseId);
+        if (topics.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "No topics found for phase with id: " + phaseId));
+        }
+        return ResponseEntity.ok(topics);
+    }
     
-    @GetMapping
+    @Operation(
+        summary = "Get all topics",
+        description = "Retrieves all topics in the quiz game.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/topics")
     public ResponseEntity<List<TopicResponseDTO>> getAllTopics(){
         List<TopicResponseDTO> topics = topicService.getAllTopics();
         return ResponseEntity.ok(topics);
     }
 
+    @Operation(
+        summary = "Create a new topic",
+        description = "Creates a new topic in the quiz game. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PostMapping
     public ResponseEntity<MessageResponse> createTopic(@Validated @RequestBody TopicRequestDTO requestDto){
         topicService.createTopic(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Topic created successfully"));
     }
 
-    @PutMapping("/{topicId}")
+    @Operation(
+        summary = "Update an existing topic",
+        description = "Updates the details of an existing topic. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PutMapping("/topics/{topicId}")
     public ResponseEntity<MessageResponse> updateTopic(@PathVariable Long topicId, 
     @Validated @RequestBody TopicRequestDTO requestDto){
         topicService.updateTopic(topicId, requestDto);
@@ -48,7 +83,12 @@ public class AdminTopicController {
         
     }
 
-    @DeleteMapping("/{topicId}")
+    @Operation(
+        summary = "Delete a topic",
+        description = "Deletes an existing topic and related flashcards from the quiz game. Requires admin privileges.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping("/topics/{topicId}")
     public ResponseEntity<MessageResponse> deleteTopic(@PathVariable Long topicId){
         topicService.deleteTopic(topicId);
         return ResponseEntity.ok(new MessageResponse("Topic deleted successfully"));

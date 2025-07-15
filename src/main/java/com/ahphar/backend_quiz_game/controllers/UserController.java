@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,6 +94,19 @@ public class UserController {
             response.put("profilePicture", requestDTO.getProfilePicture());
 
             return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+        summary = "Delete user account",
+        description = "Deletes the currently authenticated user's account.",
+        security = @SecurityRequirement(name = "bearerAuth")
+        )
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteUser(Authentication authentication) {
+        User user = userService.getCurrentUser(authentication);
+        userService.deleteUser(user);
+
+        return ResponseEntity.ok(Map.of("message", "User deleted successfully."));
     }
 
 }
