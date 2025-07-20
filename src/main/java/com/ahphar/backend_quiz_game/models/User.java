@@ -37,6 +37,9 @@ public class User {
     private String verificationCode;
     private LocalDateTime codeExpiryTime;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
     @JsonIgnore
     private UserProfile profile;

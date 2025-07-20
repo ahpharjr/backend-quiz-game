@@ -1,12 +1,13 @@
 package com.ahphar.backend_quiz_game.services;
 
 import com.ahphar.backend_quiz_game.DTO.RegisterRequestDTO;
+import com.ahphar.backend_quiz_game.exception.UserNotFoundException;
 import com.ahphar.backend_quiz_game.mapper.UserMapper;
+import com.ahphar.backend_quiz_game.models.Role;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.repositories.UserRepository;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +61,7 @@ public class UserService {
 
     public void save(RegisterRequestDTO requestDTO) {
         User user = userMapper.toModel(requestDTO);
+        user.setRole(Role.USER);
         User savedUser = userRepository.save(user);
 
         userProfileService.createDefaultProfile(savedUser);
@@ -108,6 +110,7 @@ public class UserService {
             user.setUsername(username);
             user.setPassword(passwordEncoder.encode("password@123")+ "12");
             user.setRegisteredTime(LocalDateTime.now());
+            user.setRole(Role.USER);
             user.setVerified(true);
 
             // Save user first to generate ID
@@ -134,13 +137,10 @@ public class UserService {
     }
 
 
-    public User updateUsername(String currentUsername, String newUsername) {
+    public User updateUsername(User user, String newUsername) {
         if(userRepository.existsByUsername(newUsername)) {
             throw new IllegalArgumentException("Username already taken.");
         }
-
-        User user = userRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found."));
 
         user.setUsername(newUsername);
         return userRepository.save(user);
@@ -152,9 +152,9 @@ public class UserService {
     }
 
     public User getCurrentUser(Authentication auth) {
-    String username = auth.getName();
-    return userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    String email = auth.getName();
+    return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
     }
 
     public void completeEmailVerification(User user) {

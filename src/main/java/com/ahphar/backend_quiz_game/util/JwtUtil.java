@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.ahphar.backend_quiz_game.models.User;
+
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -26,16 +28,17 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username){
+    public String generateToken(User user){
         return Jwts.builder()
-                .subject(username)
+                .subject(user.getEmail())
+                .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(secretKey)
                 .compact();
     }
     
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith((SecretKey) secretKey)
                 .build()
@@ -47,8 +50,8 @@ public class JwtUtil {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         try{
-            String username = this.extractUsername(token);
-            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+            String email = this.extractEmail(token);
+            return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
         }catch (JwtException e){
             return false;
         }

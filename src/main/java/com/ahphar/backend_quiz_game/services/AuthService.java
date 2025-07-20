@@ -41,7 +41,7 @@ public class AuthService {
     }
 
     public String authenticateOrThrow(LoginRequestDTO loginRequestDTO) {
-        User user = userService.findByUsername(loginRequestDTO.getUsername())
+        User user = userService.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(loginRequestDTO.getPassword(), user.getPassword())) {
@@ -49,10 +49,10 @@ public class AuthService {
         }
 
         if (!user.isVerified()) {
-            throw new IllegalStateException("Email not verified");
+            throw new IllegalStateException("Email is not verified");
         }
 
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(user);
     }
 
 }

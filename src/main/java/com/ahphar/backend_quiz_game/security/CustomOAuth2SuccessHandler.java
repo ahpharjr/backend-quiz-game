@@ -1,4 +1,4 @@
-package com.ahphar.backend_quiz_game.config;
+package com.ahphar.backend_quiz_game.security;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

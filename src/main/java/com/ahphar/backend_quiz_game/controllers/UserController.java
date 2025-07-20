@@ -6,7 +6,6 @@ import com.ahphar.backend_quiz_game.DTO.UserResponseDTO;
 import com.ahphar.backend_quiz_game.mapper.UserMapper;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.services.UserService;
-import com.ahphar.backend_quiz_game.util.JwtUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,12 +31,10 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
-    private final JwtUtil jwtUtil;
 
-    public UserController(UserService userService, UserMapper userMapper, JwtUtil jwtUtil) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
-        this.jwtUtil = jwtUtil;
     }
 
     @Operation(
@@ -63,17 +60,13 @@ public class UserController {
             Authentication authentication,
             @RequestBody UpdateUsernameRequestDTO requestDTO) {
 
-        String currentUsername = authentication.getName();
+        User user = userService.getCurrentUser(authentication);
 
         try {
-            User updatedUser = userService.updateUsername(currentUsername, requestDTO.getNewUsername());
-            String newToken = jwtUtil.generateToken(updatedUser.getUsername());
+            User updatedUser = userService.updateUsername(user, requestDTO.getNewUsername());
             UserResponseDTO responseDTO = userMapper.toDto(updatedUser);
 
-            return ResponseEntity.ok(Map.of(
-                    "token", newToken,
-                    "user", responseDTO
-            ));
+            return ResponseEntity.ok(responseDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

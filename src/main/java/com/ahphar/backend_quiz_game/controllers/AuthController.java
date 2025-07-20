@@ -4,7 +4,6 @@ import com.ahphar.backend_quiz_game.DTO.LoginResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -148,7 +147,7 @@ public class AuthController {
         return ResponseEntity.ok("Update password successfully!");
     }
 
-    @Operation(summary = "Login with username and password")
+    @Operation(summary = "Login with email and password")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Validated @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
@@ -156,8 +155,8 @@ public class AuthController {
             return ResponseEntity.ok(new LoginResponseDTO(token));
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Please verify your email.");
-        } catch (BadCredentialsException | UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
+        } catch (BadCredentialsException | UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
         }
     }
 
@@ -185,7 +184,7 @@ public class AuthController {
                 Optional<User> optionalUser = userService.findByEmail(email);
                 User user = optionalUser.orElseGet(() -> userService.createNewUserIfNotExists(email, name));
 
-                String jwt = jwtUtil.generateToken(user.getUsername());
+                String jwt = jwtUtil.generateToken(user);
                 return ResponseEntity.ok(Map.of("token", jwt));
             }
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid ID token");
