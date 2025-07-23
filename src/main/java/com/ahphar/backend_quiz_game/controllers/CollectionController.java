@@ -42,9 +42,11 @@ public class CollectionController {
     )
     @GetMapping
     public ResponseEntity<List<FlashcardResponseDTO>> getFlashcardCollection(Authentication auth) {
+        System.out.println("Fetching flashcard collection for user");
         User user = userService.getCurrentUser(auth);
         List<FlashcardResponseDTO> collections = collectionService.getCollections(user.getUserId());
 
+        System.out.println("Returning flashcard collection for user: " + collections);
         return new ResponseEntity<>(collections, HttpStatus.OK);
     }
 

@@ -2,6 +2,8 @@ package com.ahphar.backend_quiz_game.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseLeaderboardResponseDTO;
@@ -44,14 +46,21 @@ public class LeaderboardService {
             });
     }
 
+    @Cacheable(value = "phaseLeaderboard", key = "#phaseId")
     public List<PhaseLeaderboardResponseDTO> getTopPhaseLeaderboard(Long phaseId) {
+        
+        long startTime = System.currentTimeMillis();
+        
         Phase phase = new Phase();
         phase.setPhaseId(phaseId);
         List<PhaseLeaderboard> topLeaderboards = phaseLeaderboardRepo.findTop30ByPhaseOrderByPointDescTimeTakenAsc(phase);
         
-        return topLeaderboards.stream()
+        List<PhaseLeaderboardResponseDTO> result = topLeaderboards.stream()
             .map(leaderboardMapper::toDto)
             .toList();
+
+        System.out.println("Execution time::>>> " + (System.currentTimeMillis() - startTime) + " ms");
+        return result;
     }
 
     public QuizLeaderboard createQuizLeaderboardIfAbsent(User user, Quiz quiz) {
@@ -76,6 +85,14 @@ public class LeaderboardService {
         return topLeaderboards.stream()
             .map(leaderboardMapper::toDto)
             .toList();
+    }
+
+    @CacheEvict(value = "phaseLeaderboard", key = "#phaseLeaderboard.phase.phaseId")
+    public void updateAndEvictPhaseLeaderboard(PhaseLeaderboard phaseLeaderboard, int additionalPoints, long additionalTime) {
+        System.out.println("Evicting cache for phase leaderboard: " + phaseLeaderboard.getPhase().getPhaseId());
+        phaseLeaderboard.setPoint(phaseLeaderboard.getPoint() + additionalPoints);
+        phaseLeaderboard.setTimeTaken(phaseLeaderboard.getTimeTaken() + additionalTime);
+        phaseLeaderboardRepo.save(phaseLeaderboard);
     }
 
     

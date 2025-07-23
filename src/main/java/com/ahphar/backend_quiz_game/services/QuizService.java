@@ -30,7 +30,6 @@ public class QuizService {
     private final AnswerRepository answerRepository;
     private final QuizRepository quizRepository;
     private final QuizLeaderboardRepository quizLeaderboardRepo;
-    private final PhaseLeaderboardRepository phaseLeaderboardRepo;
     private final LeaderboardService leaderboardService;
     private final UserRepository userRepository;
     private final UserProfileService userProfileService;
@@ -48,7 +47,6 @@ public class QuizService {
         this.answerRepository = answerRepository;
         this.quizRepository = quizRepository;
         this.quizLeaderboardRepo = quizLeaderboardRepo;
-        this.phaseLeaderboardRepo = phaseLeaderboardRepo;
         this.userRepository = userRepository;
         this.leaderboardService = leaderboardService;
         this.userProfileService = userProfileService;
@@ -115,7 +113,7 @@ public class QuizService {
         quizLeaderboard.setCorrectPercentage(dto.getCorrectPercentage());
         quizLeaderboardRepo.save(quizLeaderboard);
 
-        updatePhaseLeaderboard(phaseLeaderboard, dto.getPoint(), dto.getTimeTaken());
+        leaderboardService.updateAndEvictPhaseLeaderboard(phaseLeaderboard, dto.getPoint(), dto.getTimeTaken());
     }
 
     private void handleImprovedAttempt(QuizLeaderboard existing, SubmitRequestDTO dto, PhaseLeaderboard phaseLeaderboard) {
@@ -145,16 +143,8 @@ public class QuizService {
         if (isBetterScore || isEqualScoreFasterTime) {
             int additionalPoints = dto.getPoint() - previousPoints;
             long additionalTime = dto.getTimeTaken() - previousTime;
-            updatePhaseLeaderboard(phaseLeaderboard, additionalPoints, additionalTime);
+            leaderboardService.updateAndEvictPhaseLeaderboard(phaseLeaderboard, additionalPoints, additionalTime);
         }
     }
-
-
-    private void updatePhaseLeaderboard(PhaseLeaderboard phaseLeaderboard, int additionalPoints, long additionalTime) {
-        phaseLeaderboard.setPoint(phaseLeaderboard.getPoint() + additionalPoints);
-        phaseLeaderboard.setTimeTaken(phaseLeaderboard.getTimeTaken() + additionalTime);
-        phaseLeaderboardRepo.save(phaseLeaderboard);
-    }
-
 
 }

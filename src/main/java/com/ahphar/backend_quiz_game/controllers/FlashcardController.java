@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import com.ahphar.backend_quiz_game.models.*;
+import com.ahphar.backend_quiz_game.DTO.FlashcardResponseDTO;
 
 @RestController
 @RequestMapping("/topics")
@@ -30,8 +30,8 @@ public class FlashcardController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{topicId}/flashcards")
-    public ResponseEntity<List<Flashcard>> getFlashcards(@PathVariable int topicId) {
-        List<Flashcard> flashcards = flashcardService.getAllFlashcards(topicId);
+    public ResponseEntity<List<FlashcardResponseDTO>> getFlashcards(@PathVariable int topicId) {
+        List<FlashcardResponseDTO> flashcards = flashcardService.getFlashcardsByTopicId(topicId);
 
         return new ResponseEntity<>(flashcards, HttpStatus.OK);
     }
