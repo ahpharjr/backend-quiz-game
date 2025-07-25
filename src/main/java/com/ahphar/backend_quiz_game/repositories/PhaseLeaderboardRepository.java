@@ -15,6 +15,8 @@ import com.ahphar.backend_quiz_game.models.User;
 public interface PhaseLeaderboardRepository extends JpaRepository<PhaseLeaderboard, Long> {
     List<PhaseLeaderboard> findTop30ByPhaseOrderByPointDescTimeTakenAsc(Phase phase);
     List<PhaseLeaderboard> findTop10ByPhase_PhaseIdOrderByPointDescTimeTakenAsc(Long phaseId);
+    List<PhaseLeaderboard> findByPhaseOrderByPointDescTimeTakenAsc(Phase phase);
+
     Optional<PhaseLeaderboard> findByPhaseAndUser(Phase phase, User user);
     Optional<Quiz> findByUserAndPhase(User currentUser, Phase phase);
 }

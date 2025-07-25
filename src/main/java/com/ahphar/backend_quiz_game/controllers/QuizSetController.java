@@ -14,18 +14,16 @@ import com.ahphar.backend_quiz_game.repositories.TopicRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/phases")
 @Tag(name = "Quiz Sets", description = "Endpoints related to quiz sets (topics) under a specific phase")
+@RequiredArgsConstructor
 public class QuizSetController {
 	
 	private final TopicRepository topicRepository;
 
-	public QuizSetController(TopicRepository topicRepository){
-		this.topicRepository =topicRepository;
-	}
-	
 	@Operation(
         summary = "Get all quiz sets (topics) for a phase",
         description = "Returns all quiz sets (topics) belonging to the specified phase ID.",

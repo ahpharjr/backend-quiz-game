@@ -7,18 +7,16 @@ import com.ahphar.backend_quiz_game.models.UserProfile;
 import com.ahphar.backend_quiz_game.repositories.QuizRepository;
 import com.ahphar.backend_quiz_game.repositories.UserProfileRepository;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final QuizRepository quizRepository;
-
-    public UserProfileService(UserProfileRepository userProfileRepository, QuizRepository quizRepository) {
-        this.userProfileRepository = userProfileRepository;
-        this.quizRepository = quizRepository;
-    }
 
     public void createDefaultProfile(User user){
         UserProfile profile = new UserProfile();

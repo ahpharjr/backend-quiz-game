@@ -14,14 +14,15 @@ import com.ahphar.backend_quiz_game.repositories.PhaseRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/phases")
 @Tag(name = "Phases", description = "Endpoints for retrieving quiz phases")
+@RequiredArgsConstructor
 public class PhaseController {
 
-    @Autowired
-    private PhaseRepository phaseRepository;
+    private final PhaseRepository phaseRepository;
     
     @Operation(
         summary = "Get all phases",

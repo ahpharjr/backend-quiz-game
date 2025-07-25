@@ -1,6 +1,9 @@
 package com.ahphar.backend_quiz_game.services;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -15,21 +18,15 @@ import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.repositories.PhaseLeaderboardRepository;
 import com.ahphar.backend_quiz_game.repositories.QuizLeaderboardRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class LeaderboardService {
     
     private final PhaseLeaderboardRepository phaseLeaderboardRepo;
     private final QuizLeaderboardRepository quizLeaderboardRepo;
     private final LeaderboardMapper leaderboardMapper;
-
-    public LeaderboardService(
-        PhaseLeaderboardRepository phaseLeaderboardRepo,
-        QuizLeaderboardRepository quizLeaderboardRepo,
-        LeaderboardMapper leaderboardMapper) {
-        this.phaseLeaderboardRepo = phaseLeaderboardRepo;
-        this.quizLeaderboardRepo = quizLeaderboardRepo;
-        this.leaderboardMapper = leaderboardMapper;
-    }
 
     public PhaseLeaderboard createPhaseLeaderboardIfAbsent(User user, Phase phase){
         
@@ -76,6 +73,47 @@ public class LeaderboardService {
         return topLeaderboards.stream()
             .map(leaderboardMapper::toDto)
             .toList();
+    }
+
+    public List<Map<String,Object>> getLeaderboardEntries(Phase phase) {
+
+        List<PhaseLeaderboard> leaderboards = phaseLeaderboardRepo.findByPhaseOrderByPointDescTimeTakenAsc(phase);
+
+        System.out.println("Number of Leaderboards: " + leaderboards.size());
+        System.out.println("===== Raw Leaderboard Data =====");
+        for (PhaseLeaderboard leaderboard : leaderboards) {
+            String username = leaderboard.getUser() != null ? leaderboard.getUser().getUsername() : "null";
+            System.out.println("User: " + username +
+                    ", Point: " + leaderboard.getPoint() );
+                }
+        System.out.println("================================");
+
+        
+        List<Map<String, Object>> formattedLeaderboards = new ArrayList<>();
+        int rank = 1; // Initialize rank
+        for (PhaseLeaderboard leaderboard : leaderboards) {
+            Map<String, Object> entry = new HashMap<>();
+
+            String username = leaderboard.getUser() != null ? leaderboard.getUser().getUsername() : "Unknown";
+            String phaseName = leaderboard.getPhase() != null ? leaderboard.getPhase().getName() : "Unknown Quiz";
+
+            entry.put("Rank",  rank); 
+            entry.put("username", username); 
+            entry.put("score", leaderboard.getPoint()); 
+            entry.put("phaseName", phaseName);
+            formattedLeaderboards.add(entry);
+            rank++;
+        }
+
+        System.out.println("===== Formatted Leaderboard Entries =====");
+        for (Map<String, Object> entry : formattedLeaderboards) {
+            System.out.println("Rank: " + entry.get("rank") + "Username: " + entry.get("username") +
+                    ", Score: " + entry.get("score") +
+                    ", Phase Name: " + entry.get("phaseName"));
+        }
+        System.out.println("=========================================");
+
+        return formattedLeaderboards;
     }
 
     

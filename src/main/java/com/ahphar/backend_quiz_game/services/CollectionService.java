@@ -6,21 +6,20 @@ import com.ahphar.backend_quiz_game.models.Collection;
 import com.ahphar.backend_quiz_game.models.Flashcard;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.repositories.CollectionRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CollectionService {
 
     private final CollectionRepository collectionRepository;
     private final FlahscardMapper flahscardMapper;
-
-    public CollectionService(CollectionRepository collectionRepository, FlahscardMapper flahscardMapper) {
-        this.collectionRepository = collectionRepository;
-        this.flahscardMapper = flahscardMapper; 
-    }
 
     public List<Collection> getFlashcardCollections(UUID userId){
         return collectionRepository.findAllByUser_UserId(userId);

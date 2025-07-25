@@ -7,6 +7,8 @@ import com.ahphar.backend_quiz_game.models.Role;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.repositories.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -24,15 +27,6 @@ public class UserService {
     private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-
-    public UserService(UserRepository playerRepository, UserMapper playerMapper, 
-                        UserProfileService userProfileService, PasswordEncoder passwordEncoder, EmailService emailService) {
-        this.userRepository = playerRepository;
-        this.userMapper = playerMapper;
-        this.userProfileService = userProfileService;
-        this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
-    }
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);

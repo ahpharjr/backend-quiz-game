@@ -23,7 +23,10 @@ import com.ahphar.backend_quiz_game.repositories.QuizLeaderboardRepository;
 import com.ahphar.backend_quiz_game.repositories.QuizRepository;
 import com.ahphar.backend_quiz_game.repositories.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class QuizService {
 
     private final QuestionRepository questionRepository;
@@ -35,24 +38,6 @@ public class QuizService {
     private final UserRepository userRepository;
     private final UserProfileService userProfileService;
 
-    public QuizService(
-            QuestionRepository questionRepository,
-            AnswerRepository answerRepository,
-            QuizRepository quizRepository,
-            QuizLeaderboardRepository quizLeaderboardRepo,
-            PhaseLeaderboardRepository phaseLeaderboardRepo,
-            UserRepository userRepository,
-            LeaderboardService leaderboardService,
-            UserProfileService userProfileService) {
-        this.questionRepository = questionRepository;
-        this.answerRepository = answerRepository;
-        this.quizRepository = quizRepository;
-        this.quizLeaderboardRepo = quizLeaderboardRepo;
-        this.phaseLeaderboardRepo = phaseLeaderboardRepo;
-        this.userRepository = userRepository;
-        this.leaderboardService = leaderboardService;
-        this.userProfileService = userProfileService;
-    }
 
     public List<Question> getQuestionsByQuizSet(Long quizId) {
         return questionRepository.findByQuiz_QuizId(quizId);

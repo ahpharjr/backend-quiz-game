@@ -2,6 +2,8 @@ package com.ahphar.backend_quiz_game.services;
 
 import com.ahphar.backend_quiz_game.util.JwtUtil;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,17 +16,13 @@ import com.ahphar.backend_quiz_game.exception.UserNotFoundException;
 import com.ahphar.backend_quiz_game.models.User;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    public AuthService(PasswordEncoder passwordEncoder, UserService userService, JwtUtil jwtUtil) {
-        this.passwordEncoder = passwordEncoder;
-        this.userService = userService;
-        this.jwtUtil = jwtUtil;
-    }
 
     public void register(RegisterRequestDTO registerRequestDTO) throws EmailAlreadyExistsException, NameAlreadyExistsException {
 

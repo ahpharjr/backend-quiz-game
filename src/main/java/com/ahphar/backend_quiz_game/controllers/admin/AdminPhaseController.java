@@ -22,17 +22,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/admin/phases")
 @Tag(name = "Admin Phase Management", description = "APIs for managing phases in the quiz game")
+@RequiredArgsConstructor
 public class AdminPhaseController {
 
     private final PhaseService phaseService;
 
-    public AdminPhaseController(PhaseService phaseService) {
-        this.phaseService = phaseService;
-    }
+
     
     @Operation(
         summary = "Get all phases", 

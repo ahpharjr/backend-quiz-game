@@ -17,23 +17,20 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/quizzes")
 @Tag(name = "Quizzes", description = "Quiz operations such as retrieving questions and submitting answers")
+@RequiredArgsConstructor
 public class QuizController {
 
     private final QuizService quizService;
     private final UserService userService;
     private final AchievementService achievementService;
 
-    public QuizController(QuizService quizService, UserService userService, AchievementService achievementService) {
-        this.quizService = quizService;
-        this.userService = userService;
-        this.achievementService = achievementService;
-    }
     
     @Operation(
         summary = "Get questions for a quiz",

@@ -12,16 +12,14 @@ import com.ahphar.backend_quiz_game.mapper.TopicMapper;
 import com.ahphar.backend_quiz_game.models.Topic;
 import com.ahphar.backend_quiz_game.repositories.TopicRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TopicService {
 
     private TopicRepository topicRepository;
     private final TopicMapper topicMapper;
-
-    public TopicService(TopicRepository topicRepository, TopicMapper topicMapper) {
-        this.topicRepository = topicRepository;
-        this.topicMapper = topicMapper;
-    }
 
     public List<Topic> getAllTopics(long phaseId) {
         return topicRepository.findByPhase_PhaseId(phaseId);

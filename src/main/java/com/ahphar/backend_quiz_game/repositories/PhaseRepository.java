@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PhaseRepository extends JpaRepository<Phase, Long>{
+
+    Phase findByName(String name);
     
 }
