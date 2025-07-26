@@ -59,4 +59,7 @@ public class User {
     @JsonIgnore
     private List<QuizLeaderboard> quizLeaderboards;
 
+    public User(UUID userId) {
+        this.userId = userId;
+    }
 }

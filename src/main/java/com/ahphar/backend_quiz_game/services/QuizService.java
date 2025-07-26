@@ -114,6 +114,9 @@ public class QuizService {
         quizLeaderboardRepo.save(quizLeaderboard);
 
         leaderboardService.updateAndEvictPhaseLeaderboard(phaseLeaderboard, dto.getPoint(), dto.getTimeTaken());
+        System.out.println("First attempt for user: " + user.getUsername() + " on quiz: " + quiz.getQuizId());
+        leaderboardService.updateQuizLeaderboardRedis(quizLeaderboard);
+
     }
 
     private void handleImprovedAttempt(QuizLeaderboard existing, SubmitRequestDTO dto, PhaseLeaderboard phaseLeaderboard) {
@@ -138,6 +141,7 @@ public class QuizService {
         }
 
         quizLeaderboardRepo.save(existing);
+        leaderboardService.updateQuizLeaderboardRedis(existing);
 
         //  Update phase leaderboard only for score/time improvements
         if (isBetterScore || isEqualScoreFasterTime) {

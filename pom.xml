@@ -119,6 +119,12 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
 
+		<!-- WebSocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+
 		<!-- For Redis cache serialization -->
 		<!-- <dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

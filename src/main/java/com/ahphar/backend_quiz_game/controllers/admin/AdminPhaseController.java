@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
-import com.ahphar.backend_quiz_game.models.Phase;
+import com.ahphar.backend_quiz_game.DTO.PhaseResponseDTO;
 import com.ahphar.backend_quiz_game.services.PhaseService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,8 +40,10 @@ public class AdminPhaseController {
         security = @SecurityRequirement(name = "bearerAuth")
         )
     @GetMapping
-    public ResponseEntity<List<Phase>> getAllPhases() {
-        List<Phase> phases = phaseService.getAllPhases();
+    public ResponseEntity<List<PhaseResponseDTO>> getAllPhases(){
+
+        List<PhaseResponseDTO> phases = phaseService.getAllPhases();
+
         return ResponseEntity.ok(phases);
     }
 

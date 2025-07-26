@@ -3,6 +3,7 @@ package com.ahphar.backend_quiz_game.mapper;
 import org.springframework.stereotype.Component;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
+import com.ahphar.backend_quiz_game.DTO.PhaseResponseDTO;
 import com.ahphar.backend_quiz_game.models.Phase;
 
 @Component
@@ -15,5 +16,15 @@ public class PhaseMapper {
         phase.setDesc(requestDto.getDesc());
 
         return phase;
+    }
+
+    public PhaseResponseDTO toDto(Phase phase){
+        PhaseResponseDTO dto = new PhaseResponseDTO();
+        dto.setPhaseId(phase.getPhaseId());
+        dto.setName(phase.getName());
+        dto.setImage(phase.getImage());
+        dto.setDesc(phase.getDesc());
+
+        return dto;
     }
 }

@@ -4,7 +4,14 @@ import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import java.time.Duration;
+import java.util.Set;
+import java.util.UUID;
+import java.util.Optional;
+import java.util.Objects;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseLeaderboardResponseDTO;
 import com.ahphar.backend_quiz_game.DTO.QuizLeaderboardResponseDTO;
@@ -24,13 +31,20 @@ public class LeaderboardService {
     private final QuizLeaderboardRepository quizLeaderboardRepo;
     private final LeaderboardMapper leaderboardMapper;
 
+    private final RedisTemplate<String, String> redisTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
+
     public LeaderboardService(
         PhaseLeaderboardRepository phaseLeaderboardRepo,
         QuizLeaderboardRepository quizLeaderboardRepo,
-        LeaderboardMapper leaderboardMapper) {
+        LeaderboardMapper leaderboardMapper,
+        RedisTemplate<String, String> redisTemplate,
+        SimpMessagingTemplate messagingTemplate) {
         this.phaseLeaderboardRepo = phaseLeaderboardRepo;
         this.quizLeaderboardRepo = quizLeaderboardRepo;
         this.leaderboardMapper = leaderboardMapper;
+        this.redisTemplate = redisTemplate;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public PhaseLeaderboard createPhaseLeaderboardIfAbsent(User user, Phase phase){
@@ -63,6 +77,16 @@ public class LeaderboardService {
         return result;
     }
 
+    @CacheEvict(value = "phaseLeaderboard", key = "#phaseLeaderboard.phase.phaseId")
+    public void updateAndEvictPhaseLeaderboard(PhaseLeaderboard phaseLeaderboard, int additionalPoints, long additionalTime) {
+
+        phaseLeaderboard.setPoint(phaseLeaderboard.getPoint() + additionalPoints);
+        phaseLeaderboard.setTimeTaken(phaseLeaderboard.getTimeTaken() + additionalTime);
+        PhaseLeaderboard updated = phaseLeaderboardRepo.save(phaseLeaderboard);
+
+        updatePhaseLeaderboardRedis(updated);
+    }
+
     public QuizLeaderboard createQuizLeaderboardIfAbsent(User user, Quiz quiz) {
     
     // Assuming QuizLeaderboard has similar structure to PhaseLeaderboard
@@ -87,12 +111,109 @@ public class LeaderboardService {
             .toList();
     }
 
-    @CacheEvict(value = "phaseLeaderboard", key = "#phaseLeaderboard.phase.phaseId")
-    public void updateAndEvictPhaseLeaderboard(PhaseLeaderboard phaseLeaderboard, int additionalPoints, long additionalTime) {
-        System.out.println("Evicting cache for phase leaderboard: " + phaseLeaderboard.getPhase().getPhaseId());
-        phaseLeaderboard.setPoint(phaseLeaderboard.getPoint() + additionalPoints);
-        phaseLeaderboard.setTimeTaken(phaseLeaderboard.getTimeTaken() + additionalTime);
-        phaseLeaderboardRepo.save(phaseLeaderboard);
+    public void updateQuizLeaderboardRedis(QuizLeaderboard leaderboard) {
+        String key = "quiz:leaderboard:" + leaderboard.getQuiz().getQuizId();
+        String value = leaderboard.getUser().getUserId().toString();
+
+        // Check if Redis is already populated for this quiz
+        Long existingCount = redisTemplate.opsForZSet().size(key);
+        if (existingCount == null || existingCount == 0) {
+            // Redis doesn't have data, preload top 30 from DB
+            preloadTop30ToRedis(leaderboard.getQuiz());
+        }
+
+        // Composite score: higher point, lower time is better
+        double compositeScore = leaderboard.getPoint() * 10000 - leaderboard.getTimeTaken();
+
+        // Add/update Redis sorted set
+        redisTemplate.opsForZSet().add(key, value, compositeScore);
+
+        //Keep only top 30
+        redisTemplate.opsForZSet().removeRange(key, 30, -1);
+
+        //(Optional) Expire after 1 day
+        redisTemplate.expire(key, Duration.ofDays(1));
+
+        //Get top 10 for WebSocket push
+        Set<String> topUserIds = redisTemplate.opsForZSet().reverseRange(key, 0, 29);
+        if (topUserIds == null) return;
+
+        List<QuizLeaderboardResponseDTO> topDtos = topUserIds.stream()
+            .map(userIdStr -> {
+                try {
+                    UUID userId = UUID.fromString(userIdStr);
+                    Optional<QuizLeaderboard> entryOpt = quizLeaderboardRepo.findByQuizAndUser(
+                        leaderboard.getQuiz(), new User(userId));
+                    return entryOpt.map(leaderboardMapper::toDto).orElse(null);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .toList();
+
+        messagingTemplate.convertAndSend("/topic/leaderboard/quizzes/" + leaderboard.getQuiz().getQuizId(), topDtos);
+
+    }
+
+
+    private void preloadTop30ToRedis(Quiz quiz) {
+        String key = "quiz:leaderboard:" + quiz.getQuizId();
+
+        List<QuizLeaderboard> top30 = quizLeaderboardRepo.findTop30ByQuizOrderByPointDescTimeTakenAsc(quiz);
+        if (top30.isEmpty()) return;
+
+        for (QuizLeaderboard lb : top30) {
+            String userId = lb.getUser().getUserId().toString();
+            double score = lb.getPoint() * 10000 - lb.getTimeTaken();
+            redisTemplate.opsForZSet().add(key, userId, score);
+        }
+    }
+
+    public void updatePhaseLeaderboardRedis(PhaseLeaderboard leaderboard){
+        String key = "phase:leaderboard:" + leaderboard.getPhase().getPhaseId();
+        String userId = leaderboard.getUser().getUserId().toString();
+
+        Long count = redisTemplate.opsForZSet().size(key);
+        if(count == null || count == 0){
+            preloadTop30ToRedis(leaderboard.getPhase());
+        }
+
+        double score = leaderboard.getPoint() * 10000 - (leaderboard.getTimeTaken()/100);
+        redisTemplate.opsForZSet().add(key, userId, score);
+        redisTemplate.opsForZSet().removeRange(key, 30, -1);
+        redisTemplate.expire(key, Duration.ofDays(1));
+
+        Set<String> topUserIds = redisTemplate.opsForZSet().reverseRange(key, 0, 29);
+
+        if(topUserIds == null) return;
+
+        List<PhaseLeaderboardResponseDTO> topDtos = topUserIds.stream()
+            .map(uidStr -> {
+                try {
+                    UUID uid = UUID.fromString(uidStr);
+                    Optional<PhaseLeaderboard> entry = phaseLeaderboardRepo.findByPhaseAndUser(leaderboard.getPhase(), new User(uid));
+                    return entry.map(leaderboardMapper::toDto).orElse(null);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            })
+            .filter(Objects::nonNull)
+            .toList();
+
+        messagingTemplate.convertAndSend("/topic/leaderboard/phases/" + leaderboard.getPhase().getPhaseId(), topDtos);
+
+        System.out.println("Send message to client ::" + topDtos);
+    }
+
+    private void preloadTop30ToRedis(Phase phase){
+        String key = "phase:leaderboard:"+ phase.getPhaseId();
+        List<PhaseLeaderboard> top30 = phaseLeaderboardRepo.findTop30ByPhaseOrderByPointDescTimeTakenAsc(phase);
+        for (PhaseLeaderboard lb : top30){
+            String userId = lb.getUser().getUserId().toString();
+            double score = lb.getPoint() * 10000 - (lb.getTimeTaken()/100);
+            redisTemplate.opsForZSet().add(key, userId, score);
+        }
     }
 
     
