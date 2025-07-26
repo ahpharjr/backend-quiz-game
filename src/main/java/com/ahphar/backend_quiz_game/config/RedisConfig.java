@@ -10,8 +10,8 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
+// import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+// import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 @Configuration
 public class RedisConfig {
@@ -25,21 +25,36 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
-        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())
-            );
-
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
-        cacheConfigurations.put("phases", defaultConfig.entryTtl(Duration.ofHours(24)));
-        cacheConfigurations.put("flashcards", defaultConfig.entryTtl(Duration.ofHours(24)));
-        cacheConfigurations.put("phaseLeaderboard", defaultConfig.entryTtl(Duration.ofHours(24)));
+        cacheConfigurations.put("phases", RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1)));
+
+        cacheConfigurations.put("flashcards", RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(1)));
 
         return RedisCacheManager.builder(factory)
-            .cacheDefaults(defaultConfig)
             .withInitialCacheConfigurations(cacheConfigurations)
             .build();
     }
+
+    // @Bean
+    // public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
+    //     RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+    //         .serializeValuesWith(
+    //             RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer())
+    //         );
+
+    //     Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+
+    //     cacheConfigurations.put("phases", defaultConfig.entryTtl(Duration.ofHours(24)));
+    //     cacheConfigurations.put("flashcards", defaultConfig.entryTtl(Duration.ofHours(24)));
+    //     cacheConfigurations.put("phaseLeaderboard", defaultConfig.entryTtl(Duration.ofHours(24)));
+
+    //     return RedisCacheManager.builder(factory)
+    //         .cacheDefaults(defaultConfig)
+    //         .withInitialCacheConfigurations(cacheConfigurations)
+    //         .build();
+    // }
 
 }
