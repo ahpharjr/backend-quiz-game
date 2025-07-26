@@ -23,16 +23,16 @@ import com.ahphar.backend_quiz_game.services.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/admin")
 @Tag(name = "Admin Topic Management", description = "APIs for managing topics in the quiz game")
+@RequiredArgsConstructor
 public class AdminTopicController {
 
     private final TopicService topicService;
-    public AdminTopicController(TopicService topicService) {
-        this.topicService = topicService;
-    }
+
 
     @Operation(
         summary = "Get topics by phase ID",

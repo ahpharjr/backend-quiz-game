@@ -23,10 +23,12 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/leaderboard")
 @Tag(name = "Leaderboard", description = "APIs for quiz and phase leaderboards")
+@RequiredArgsConstructor
 public class LeaderboardController {
     
     private final LeaderboardService leaderboardService;
@@ -34,12 +36,6 @@ public class LeaderboardController {
     private final PhaseService phaseService;
     private final QuizService quizService;
 
-    public LeaderboardController(LeaderboardService leaderboardService, UserService userService, PhaseService phaseService, QuizService quizService) {
-        this.leaderboardService = leaderboardService;
-        this.userService = userService;
-        this.phaseService = phaseService;
-        this.quizService = quizService;
-    }
 
     @Operation(
         summary = "Add user to phase leaderboard",

@@ -10,19 +10,18 @@ import com.ahphar.backend_quiz_game.services.TopicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import com.ahphar.backend_quiz_game.models.*;
 
 @RestController
 @RequestMapping("/phases")
 @Tag(name = "Topics", description = "Endpoints related to topics")
+@RequiredArgsConstructor
 public class TopicController {
 
     private final TopicService topicService;
 
-    public TopicController(TopicService topicService) {
-        this.topicService = topicService;
-    }
 
     @Operation(
         summary = "Get all topics for a phase",

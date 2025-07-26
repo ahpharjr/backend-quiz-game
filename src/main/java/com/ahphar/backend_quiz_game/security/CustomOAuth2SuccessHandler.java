@@ -15,19 +15,17 @@ import com.ahphar.backend_quiz_game.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler{
     
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final UserProfileService userProfileService;
 
-    public CustomOAuth2SuccessHandler(JwtUtil jwtUtil, UserRepository userRepository, UserProfileService userProfileService){
-        this.jwtUtil = jwtUtil;
-        this.userProfileService = userProfileService;
-        this.userRepository = userRepository;
-    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,

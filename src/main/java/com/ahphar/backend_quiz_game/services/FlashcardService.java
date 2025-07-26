@@ -10,15 +10,13 @@ import com.ahphar.backend_quiz_game.mapper.FlahscardMapper;
 import com.ahphar.backend_quiz_game.models.Flashcard;
 import com.ahphar.backend_quiz_game.repositories.FlashcardRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class FlashcardService {
     private final FlashcardRepository flashcardRepository;
     private final FlahscardMapper flashcardMapper;
-
-    public FlashcardService(FlashcardRepository flashcardRepository, FlahscardMapper flahscardMapper) {
-        this.flashcardRepository = flashcardRepository;
-        this.flashcardMapper = flahscardMapper;
-    }
 
     public List<Flashcard> getAllFlashcards(long topicId) {
         return flashcardRepository.findByTopic_TopicId(topicId);

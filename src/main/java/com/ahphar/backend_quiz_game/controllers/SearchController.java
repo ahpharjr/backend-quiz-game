@@ -12,17 +12,16 @@ import com.ahphar.backend_quiz_game.services.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/search")
 @Tag(name = "Search", description ="Endpoints for searching flashcards")
+@RequiredArgsConstructor
 public class SearchController {
 
     private final SearchService searchService;
 
-    public SearchController(SearchService searchService) {
-        this.searchService = searchService;
-    }
 
     @Operation(
         summary = "Get keyword suggestions",

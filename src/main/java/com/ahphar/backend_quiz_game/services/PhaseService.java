@@ -13,16 +13,14 @@ import com.ahphar.backend_quiz_game.mapper.PhaseMapper;
 import com.ahphar.backend_quiz_game.models.Phase;
 import com.ahphar.backend_quiz_game.repositories.PhaseRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class PhaseService {
     
     private final PhaseRepository phaseRepository;
     private final PhaseMapper phaseMapper;
-
-    public PhaseService(PhaseRepository phaseRepository, PhaseMapper phaseMapper) {
-        this.phaseRepository = phaseRepository;
-        this.phaseMapper = phaseMapper;
-    }
 
     @Cacheable("phases")
     public List<PhaseResponseDTO> getAllPhases(){

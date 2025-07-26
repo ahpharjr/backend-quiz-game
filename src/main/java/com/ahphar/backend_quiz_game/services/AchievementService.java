@@ -20,7 +20,10 @@ import com.ahphar.backend_quiz_game.repositories.QuizRepository;
 import com.ahphar.backend_quiz_game.repositories.UserAchievementRepository;
 import com.ahphar.backend_quiz_game.util.AchievementCodes;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AchievementService {
 
     private final AchievementRepository achievementRepository;
@@ -29,17 +32,6 @@ public class AchievementService {
     private final QuizRepository quizRepo;
     private final QuizLeaderboardRepository quizLeaderboardRepository;
     private final PhaseLeaderboardRepository phaseLeaderboardRepository;
-
-    public AchievementService(AchievementRepository achievementRepository, AchievementMapper achievementMapper,
-                                UserAchievementRepository userAchievementRepository, QuizRepository quizRepo,
-                                QuizLeaderboardRepository quizLeaderboardRepository, PhaseLeaderboardRepository phaseLeaderboardRepository){
-        this.achievementRepository = achievementRepository;
-        this.achievementMapper = achievementMapper;
-        this.userAchievementRepo = userAchievementRepository;
-        this.quizRepo = quizRepo;
-        this.quizLeaderboardRepository = quizLeaderboardRepository;
-        this.phaseLeaderboardRepository = phaseLeaderboardRepository;
-    }
     
     public List<AchievementResponseDTO> getAllAchievements(){
         List<Achievement> achievements = achievementRepository.findAll();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ahphar.backend_quiz_game.DTO.EmailCodeDTO;
@@ -32,6 +33,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -43,6 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 @RestController
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "APIs for user registration, login, and password reset.")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
@@ -51,13 +54,6 @@ public class AuthController {
 
     @Value("${google.clientId}")
     private String googleClientId;
-
-
-    public AuthController(AuthService authService, JwtUtil jwtUtil, UserService userService){
-        this.authService = authService;
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
-    }
     
     @Operation(summary = "Register a new user")
     @PostMapping("/register")

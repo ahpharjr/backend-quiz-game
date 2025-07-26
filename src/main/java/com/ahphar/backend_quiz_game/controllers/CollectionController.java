@@ -12,6 +12,7 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +24,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/collections")
 @Tag(name = "Collections", description = "Manage flashcard collections for the authenticated user")
+@RequiredArgsConstructor
 public class CollectionController {
 
     private final CollectionService collectionService;
     private final UserService userService;
     private final FlashcardService flashcardService;
-
-    public CollectionController(CollectionService collectionService, UserService userService, FlashcardService flashcardService) {
-        this.collectionService = collectionService;
-        this.userService = userService;
-        this.flashcardService = flashcardService;
-    }
 
     @Operation(
         summary = "Get flashcard collection",
@@ -41,6 +37,7 @@ public class CollectionController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<FlashcardResponseDTO>> getFlashcardCollection(Authentication auth) {
         System.out.println("Fetching flashcard collection for user");
         User user = userService.getCurrentUser(auth);

@@ -10,6 +10,7 @@ import com.ahphar.backend_quiz_game.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,15 +28,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 @Tag(name = "User" , description = "Operations related to user profile management")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
-
-    public UserController(UserService userService, UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
-    }
 
     @Operation(
         summary = "Get current logged-in user info",

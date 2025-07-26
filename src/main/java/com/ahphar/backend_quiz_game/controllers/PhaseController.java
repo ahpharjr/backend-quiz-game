@@ -13,17 +13,15 @@ import com.ahphar.backend_quiz_game.services.PhaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/phases")
 @Tag(name = "Phases", description = "Endpoints for retrieving quiz phases")
+@RequiredArgsConstructor
 public class PhaseController {
 
     private final PhaseService phaseService;
-
-    public PhaseController(PhaseService phaseService){
-        this.phaseService = phaseService;
-    }
 
     @Operation(
         summary = "Get all phases",
