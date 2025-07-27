@@ -33,7 +33,6 @@ public class AdminTopicController {
 
     private final TopicService topicService;
 
-
     @Operation(
         summary = "Get topics by phase ID",
         description = "Retrieves all topics associated with a specific phase ID.",
@@ -64,7 +63,7 @@ public class AdminTopicController {
         description = "Creates a new topic in the quiz game. Requires admin privileges.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PostMapping
+    @PostMapping("/topic")
     public ResponseEntity<MessageResponse> createTopic(@Validated @RequestBody TopicRequestDTO requestDto){
         topicService.createTopic(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Topic created successfully"));
@@ -90,7 +89,8 @@ public class AdminTopicController {
     )
     @DeleteMapping("/topics/{topicId}")
     public ResponseEntity<MessageResponse> deleteTopic(@PathVariable Long topicId){
-        topicService.deleteTopic(topicId);
+        Long phaseId = topicService.getPhaseIdFromTopic(topicId);
+        topicService.deleteTopic(topicId, phaseId);
         return ResponseEntity.ok(new MessageResponse("Topic deleted successfully"));
     }
 

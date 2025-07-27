@@ -2,6 +2,8 @@ package com.ahphar.backend_quiz_game.services;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +20,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TopicService {
 
-    private TopicRepository topicRepository;
+    private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
-
-    public List<Topic> getAllTopics(long phaseId) {
-        return topicRepository.findByPhase_PhaseId(phaseId);
-    }
     
+    @Cacheable(value = "topics", key = "'phaseTopics:' + #phaseId")
     public List<TopicResponseDTO> getTopicByPhaseId(Long phaseId){
         List<Topic> topics = topicRepository.findByPhase_PhaseId(phaseId);
         return topics.stream()
@@ -39,12 +38,14 @@ public class TopicService {
                 .toList();
     }
 
+    @CacheEvict(value = "topics", key = "'phaseTopics:' + #requestDTO.phaseId")
     public void createTopic(TopicRequestDTO requestDTO){
             Topic topic = topicMapper.toModel(requestDTO);
 
         topicRepository.save(topic);
     }
 
+    @CacheEvict(value = "topics", key = "'phaseTopics:' + #requestDTO.phaseId")
     public void updateTopic(Long topicId, TopicRequestDTO requestDTO){
         Topic existingTopic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
@@ -56,10 +57,19 @@ public class TopicService {
         topicRepository.save(existingTopic);
     }
 
+    @CacheEvict(value = "topics", key = "'phaseTopics:' + #phaseId")
     @Transactional
-    public void deleteTopic(Long topicId){
+    public void deleteTopic(Long topicId, Long phaseId){
         Topic existingTopic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
+
         topicRepository.delete(existingTopic);
+    }
+
+    public Long getPhaseIdFromTopic(Long topicId){
+        Topic existingTopic = topicRepository.findById(topicId)
+        .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
+
+        return existingTopic.getPhase().getPhaseId();
     }
 }

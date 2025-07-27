@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-import com.ahphar.backend_quiz_game.models.*;
+import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
 
 @RestController
 @RequestMapping("/phases")
@@ -22,15 +22,14 @@ public class TopicController {
 
     private final TopicService topicService;
 
-
     @Operation(
         summary = "Get all topics for a phase",
         description = "Returns all topics belonging to the specific phase",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{phaseId}/topics")
-    public ResponseEntity<List<Topic>> getTopics(@PathVariable long phaseId) {
-        List<Topic> topics = topicService.getAllTopics(phaseId);
+    public ResponseEntity<List<TopicResponseDTO>> getTopics(@PathVariable long phaseId) {
+        List<TopicResponseDTO> topics = topicService.getTopicByPhaseId(phaseId);
 
         return ResponseEntity.ok(topics);
     }

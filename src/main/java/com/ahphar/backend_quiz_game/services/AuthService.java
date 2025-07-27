@@ -23,7 +23,6 @@ public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-
     public void register(RegisterRequestDTO registerRequestDTO) throws EmailAlreadyExistsException, NameAlreadyExistsException {
 
         if(userService.existsByUsername(registerRequestDTO.getUsername())) {

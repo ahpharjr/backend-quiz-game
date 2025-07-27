@@ -15,7 +15,6 @@ public class TopicRequestDTO {
     @NotBlank(message = "Image is required")
     private String image;
 
-    @NotBlank(message = "Description is required")
     private String desc;
 
     @NotNull(message = "Phase ID is required")

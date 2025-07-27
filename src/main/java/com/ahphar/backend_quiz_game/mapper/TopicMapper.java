@@ -20,6 +20,7 @@ public class TopicMapper {
     
     public TopicResponseDTO toResponseDTO(Topic topic) {
         TopicResponseDTO responseDto = new TopicResponseDTO();
+        responseDto.setTopicId(topic.getTopicId());
         responseDto.setName(topic.getName());
         responseDto.setImage(topic.getImage());
         responseDto.setDesc(topic.getDesc());

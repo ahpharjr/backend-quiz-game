@@ -25,15 +25,17 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory factory) {
+
+        RedisCacheConfiguration dafaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofHours(6));
+
         Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
 
-        cacheConfigurations.put("phases", RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofHours(1)));
-
-        cacheConfigurations.put("flashcards", RedisCacheConfiguration.defaultCacheConfig()
+        cacheConfigurations.put("phaseLeaderboard", RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(1)));
 
         return RedisCacheManager.builder(factory)
+            .cacheDefaults(dafaultCacheConfig)
             .withInitialCacheConfigurations(cacheConfigurations)
             .build();
     }
