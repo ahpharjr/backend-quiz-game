@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ahphar.backend_quiz_game.models.Topic;
-import com.ahphar.backend_quiz_game.repositories.TopicRepository;
+import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
+import com.ahphar.backend_quiz_game.services.TopicService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QuizSetController {
 	
-	private final TopicRepository topicRepository;
+	private final TopicService topicService;
 
 	@Operation(
         summary = "Get all quiz sets (topics) for a phase",
@@ -30,9 +30,9 @@ public class QuizSetController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
 	@GetMapping("/{phaseId}/quizzes")
-	public ResponseEntity <List<Topic>> getAllTopics(@PathVariable Long phaseId){
-		List<Topic> topics = topicRepository.findByPhase_PhaseId(phaseId);
-		
-		return ResponseEntity.ok(topics);
-	}
+    public ResponseEntity<List<TopicResponseDTO>> getTopics(@PathVariable long phaseId) {
+        List<TopicResponseDTO> topics = topicService.getTopicByPhaseId(phaseId);
+
+        return ResponseEntity.ok(topics);
+    }
 }

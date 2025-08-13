@@ -34,6 +34,12 @@ public class PhaseService {
         return phaseRepository.findById(phaseId)
                 .orElseThrow(() -> new RuntimeException("Phase not found with id: " + phaseId));
     }
+    
+    public PhaseResponseDTO getPhase(Long phaseId){
+        Phase phase = getPhaseById(phaseId);
+
+        return phaseMapper.toDto(phase);
+    }
 
     @CacheEvict(value = "phases", allEntries = true)
     public void createPhase(PhaseRequestDTO requestDto) {
