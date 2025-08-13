@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin/phases")
+@RequestMapping("/admin")
 @Tag(name = "Admin Phase Management", description = "APIs for managing phases in the quiz game")
 @RequiredArgsConstructor
 public class AdminPhaseController {
@@ -37,7 +37,7 @@ public class AdminPhaseController {
         description = "Retrieve a list of all phases in the quiz game",
         security = @SecurityRequirement(name = "bearerAuth")
         )
-    @GetMapping
+    @GetMapping("/phases")
     public ResponseEntity<List<PhaseResponseDTO>> getAllPhases(){
 
         List<PhaseResponseDTO> phases = phaseService.getAllPhases();
@@ -50,7 +50,7 @@ public class AdminPhaseController {
         description = "Creates a new phase in the quiz game. Requires admin privileges.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PostMapping
+    @PostMapping("/phase")
     public ResponseEntity<MessageResponse> createPhase(@Valid @RequestBody PhaseRequestDTO requestDto) {
         
         phaseService.createPhase(requestDto);
@@ -62,7 +62,7 @@ public class AdminPhaseController {
         description = "Updates the details of an existing phase. Requires admin privileges.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PutMapping("/{phaseId}")
+    @PutMapping("/phases/{phaseId}")
     public ResponseEntity<MessageResponse> updatePhase(@PathVariable Long phaseId, @Valid @RequestBody PhaseRequestDTO requestDto) {
         
         phaseService.updatePhase(phaseId, requestDto);
@@ -74,7 +74,7 @@ public class AdminPhaseController {
         description = "Deletes an existing phase and all the related topics from the quiz game. Requires admin privileges.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
-    @DeleteMapping("/{phaseId}")
+    @DeleteMapping("/phases/{phaseId}")
     public ResponseEntity<MessageResponse> deletePhase(@PathVariable Long phaseId) {
         
         phaseService.deletePhase(phaseId);
