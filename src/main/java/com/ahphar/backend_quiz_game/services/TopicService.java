@@ -22,6 +22,7 @@ public class TopicService {
 
     private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
+    private final QuizService quizService;
     
     @Cacheable(value = "topics", key = "'phaseTopics:' + #phaseId")
     public List<TopicResponseDTO> getTopicByPhaseId(Long phaseId){
@@ -43,6 +44,7 @@ public class TopicService {
             Topic topic = topicMapper.toModel(requestDTO);
 
         topicRepository.save(topic);
+        quizService.createQuiz(topic);
     }
 
     @CacheEvict(value = "topics", key = "'phaseTopics:' + #requestDTO.phaseId")

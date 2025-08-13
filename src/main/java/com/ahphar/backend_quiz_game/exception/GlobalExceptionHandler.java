@@ -78,4 +78,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 
+    @ExceptionHandler(QuizNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleQuizNotFoundException(QuizNotFoundException ex){
+
+        log.warn("Quiz not found: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Quiz not found!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
 }

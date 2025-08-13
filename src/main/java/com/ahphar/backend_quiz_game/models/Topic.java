@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,9 @@ public class Topic {
 	@ManyToOne
 	@JoinColumn(name = "phase_id", nullable = false)
 	private Phase phase;
-	
+
+	@OneToOne(mappedBy = "topic", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private Quiz quiz;
+
 }

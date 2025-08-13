@@ -14,6 +14,7 @@ import com.ahphar.backend_quiz_game.models.PhaseLeaderboard;
 import com.ahphar.backend_quiz_game.models.Question;
 import com.ahphar.backend_quiz_game.models.Quiz;
 import com.ahphar.backend_quiz_game.models.QuizLeaderboard;
+import com.ahphar.backend_quiz_game.models.Topic;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.models.UserProfile;
 import com.ahphar.backend_quiz_game.repositories.AnswerRepository;
@@ -133,6 +134,12 @@ public class QuizService {
             long additionalTime = dto.getTimeTaken() - previousTime;
             leaderboardService.updateAndEvictPhaseLeaderboard(phaseLeaderboard, additionalPoints, additionalTime);
         }
+    }
+
+    public void createQuiz(Topic topic){
+        Quiz quiz = new Quiz();
+        quiz.setTopic(topic);
+        quizRepository.save(quiz);
     }
 
 }

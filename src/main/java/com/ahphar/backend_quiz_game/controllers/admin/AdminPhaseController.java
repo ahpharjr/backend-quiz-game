@@ -32,8 +32,6 @@ public class AdminPhaseController {
 
     private final PhaseService phaseService;
 
-
-    
     @Operation(
         summary = "Get all phases", 
         description = "Retrieve a list of all phases in the quiz game",
