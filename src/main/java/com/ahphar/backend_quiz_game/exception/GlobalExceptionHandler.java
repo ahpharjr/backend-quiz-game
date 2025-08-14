@@ -100,4 +100,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 
+    @ExceptionHandler(FlashcardNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleFlashcardNotFoundException(FlashcardNotFoundException ex){
+
+        log.warn("Flashcard not found: {}", ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Flashcard not found!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
 }

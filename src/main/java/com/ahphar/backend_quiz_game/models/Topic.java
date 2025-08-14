@@ -1,5 +1,7 @@
 package com.ahphar.backend_quiz_game.models;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,5 +30,8 @@ public class Topic {
 	@OneToOne(mappedBy = "topic", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Quiz quiz;
+
+	@OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Flashcard> flashcards;
 
 }

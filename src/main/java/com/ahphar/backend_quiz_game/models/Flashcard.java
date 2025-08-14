@@ -12,7 +12,7 @@ import lombok.*;
 public class Flashcard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cardId;
 
     private String keyword;

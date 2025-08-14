@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,11 @@ public class TopicService {
     private final TopicRepository topicRepository;
     private final TopicMapper topicMapper;
     private final QuizService quizService;
+
+    public Topic getTopicById(Long topicId){
+        return topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException("Topic not found with id: " + topicId));
+    }
     
     @Cacheable(value = "topics", key = "'phaseTopics:' + #phaseId")
     public List<TopicResponseDTO> getTopicByPhaseId(Long phaseId){
@@ -59,7 +65,10 @@ public class TopicService {
         topicRepository.save(existingTopic);
     }
 
-    @CacheEvict(value = "topics", key = "'phaseTopics:' + #phaseId")
+    @Caching(evict = {
+        @CacheEvict(value = "topics", key = "'phaseTopics:' + #phaseId"),
+        @CacheEvict(value = "flashcards", key = "#topicId") // remove flashcards cache for this topic
+    })
     @Transactional
     public void deleteTopic(Long topicId, Long phaseId){
         Topic existingTopic = topicRepository.findById(topicId)
