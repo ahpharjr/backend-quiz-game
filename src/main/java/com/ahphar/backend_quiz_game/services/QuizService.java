@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ahphar.backend_quiz_game.DTO.SubmitRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.SubmitResponseDTO;
 import com.ahphar.backend_quiz_game.DTO.UserProfileDTO;
+import com.ahphar.backend_quiz_game.exception.QuizNotFoundException;
 import com.ahphar.backend_quiz_game.models.Answer;
 import com.ahphar.backend_quiz_game.models.Phase;
 import com.ahphar.backend_quiz_game.models.PhaseLeaderboard;
@@ -47,7 +48,7 @@ public class QuizService {
 
     public Quiz getQuizById(Long quizId) {
         return quizRepository.findById(quizId)
-                .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + quizId));
+                .orElseThrow(() -> new QuizNotFoundException("Quiz not found with id: " + quizId));
     }
 
     public SubmitResponseDTO submitQuiz(User currentUser, Long quizId, SubmitRequestDTO requestDTO) {

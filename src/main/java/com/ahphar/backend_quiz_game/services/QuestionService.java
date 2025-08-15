@@ -31,6 +31,11 @@ public class QuestionService {
                 .toList();
     }
 
+    public Question getQuestionById(Long questionId){
+        return questionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionNotFoundException("Question not found with id: " + questionId));
+    }
+
     public void createQuestion(QuestionRequestDTO requestDTO, Long quizId) {
         Question question = questionMapper.toModel(requestDTO);
 
@@ -52,7 +57,7 @@ public class QuestionService {
     @Transactional
     public void deleteQuestion(Long questionId) {
         Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new RuntimeException("Question not found with id: " + questionId));
+                .orElseThrow(() -> new QuestionNotFoundException("Question not found with id: " + questionId));
         
         questionRepository.delete(question);
     }

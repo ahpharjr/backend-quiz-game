@@ -27,7 +27,7 @@ public class Topic {
 	@JoinColumn(name = "phase_id", nullable = false)
 	private Phase phase;
 
-	@OneToOne(mappedBy = "topic", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Quiz quiz;
 

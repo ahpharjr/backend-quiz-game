@@ -111,4 +111,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 
+    @ExceptionHandler(AnswerNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAnswerNotFoundException(AnswerNotFoundException ex){
+
+        log.warn("Answer not found: {}" , ex.getMessage());
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Answer not found!");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
 }
