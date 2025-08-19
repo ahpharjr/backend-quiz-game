@@ -8,12 +8,13 @@ import com.ahphar.backend_quiz_game.models.Question;
 
 @Component
 public class QuestionMapper {
-    
-    public QuestionResponseDTO toDto(Question question){
+
+    public QuestionResponseDTO toDto(Question question, Long phaseId){
         QuestionResponseDTO dto = new QuestionResponseDTO();
         dto.setQuestionId(question.getQuestionId());
         dto.setQuestionText(question.getQuestion());
         dto.setImage(question.getImage());
+        dto.setPhaseId(phaseId);
         return dto;
     }
 

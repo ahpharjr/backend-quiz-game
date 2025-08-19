@@ -27,7 +27,10 @@ public class QuestionService {
         List<Question> questions = questionRepository.findByQuiz_QuizId(quizId);
 
         return questions.stream()
-                .map(questionMapper::toDto)
+                .map(question -> {
+                    Long phaseId = getPhaseIdFromQuestion(question.getQuestionId());
+                    return questionMapper.toDto(question, phaseId);
+                })
                 .toList();
     }
 
@@ -60,5 +63,11 @@ public class QuestionService {
                 .orElseThrow(() -> new QuestionNotFoundException("Question not found with id: " + questionId));
         
         questionRepository.delete(question);
+    }
+
+    public Long getPhaseIdFromQuestion(Long questionId){
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new QuestionNotFoundException("Question not found with id: " + questionId));
+        return question.getQuiz().getTopic().getPhase().getPhaseId();
     }
 }

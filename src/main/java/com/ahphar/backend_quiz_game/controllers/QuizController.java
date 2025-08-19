@@ -5,12 +5,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.ahphar.backend_quiz_game.DTO.AnswerResponseDTO;
+import com.ahphar.backend_quiz_game.DTO.QuestionResponseDTO;
 import com.ahphar.backend_quiz_game.DTO.SubmitRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.SubmitResponseDTO;
-import com.ahphar.backend_quiz_game.models.Answer;
-import com.ahphar.backend_quiz_game.models.Question;
 import com.ahphar.backend_quiz_game.models.User;
 import com.ahphar.backend_quiz_game.services.AchievementService;
+import com.ahphar.backend_quiz_game.services.AnswerService;
+import com.ahphar.backend_quiz_game.services.QuestionService;
 import com.ahphar.backend_quiz_game.services.QuizService;
 import com.ahphar.backend_quiz_game.services.UserService;
 
@@ -30,6 +32,8 @@ public class QuizController {
     private final QuizService quizService;
     private final UserService userService;
     private final AchievementService achievementService;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
 
     
     @Operation(
@@ -38,8 +42,8 @@ public class QuizController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{quizId}/questions")
-    public ResponseEntity<List<Question>> getAllQuestions(@PathVariable Long quizId){
-        List<Question> questions = quizService.getQuestionsByQuizSet(quizId);
+    public ResponseEntity<List<QuestionResponseDTO>> getAllQuestions(@PathVariable Long quizId){
+        List<QuestionResponseDTO> questions = questionService.getQuestionsByQuizId(quizId);
 
         return ResponseEntity.ok(questions);
     }
@@ -50,8 +54,8 @@ public class QuizController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{quizId}/answers")
-    public ResponseEntity<List<Answer>> getAllAnswersByQuiz(@PathVariable Long quizId){
-        List<Answer> answers = quizService.getAnswersByQuiz(quizId);
+    public ResponseEntity<List<AnswerResponseDTO>> getAllAnswersByQuiz(@PathVariable Long quizId){
+        List<AnswerResponseDTO> answers = answerService.getAllAnswersByQuizId(quizId);
 
         return ResponseEntity.ok(answers);
     }

@@ -13,4 +13,5 @@ public class QuestionResponseDTO {
     private Long questionId;
     private String questionText;
     private String image;
+    private Long phaseId;
 }

@@ -28,6 +28,6 @@ public class Quiz {
     private List<QuizLeaderboard> quizLeaderboards = new ArrayList<>();
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    // @JsonIgnore
     private List<Question> questions;
 }
