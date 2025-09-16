@@ -28,16 +28,36 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(User user){
+    public String generateAccessToken(User user) {
         return Jwts.builder()
                 .subject(user.getEmail())
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 min
                 .signWith(secretKey)
                 .compact();
     }
-    
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7)) // 7 days
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .claim("role", user.getRole().name())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+                // 7 days
+                .signWith(secretKey)
+                .compact();
+    }
+
     public String extractEmail(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith((SecretKey) secretKey)
@@ -49,10 +69,10 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        try{
+        try {
             String email = this.extractEmail(token);
             return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        }catch (JwtException e){
+        } catch (JwtException e) {
             return false;
         }
     }

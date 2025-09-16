@@ -22,7 +22,6 @@ public class SearchController {
 
     private final SearchService searchService;
 
-
     @Operation(
         summary = "Get keyword suggestions",
         description = "Returns a list of suggested keywords based on the provided partial term. Useful for autocomplete features.",
