@@ -218,9 +218,10 @@ public class AuthController {
             // Build HTTP-only secure cookie for refresh token
             ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                     .httpOnly(true)
-                    .secure(true)
+                    // .secure(true)
+                    .secure(false)
                     .sameSite("Strict") // or "Lax" if frontend/backend are on different domains
-                    .path("/api/auth/refresh")
+                    .path("/auth/refresh")
                     .maxAge(7 * 24 * 60 * 60) // 7 days
                     .build();
 
@@ -242,11 +243,14 @@ public class AuthController {
             for (Cookie cookie : cookies) {
                 if ("refresh_token".equals(cookie.getName())) {
                     String refreshToken = cookie.getValue();
+
                     String email = jwtUtil.extractEmail(refreshToken);
+                    User user = userService.findByEmail(email)
+                            .orElseThrow(() -> new UserNotFoundException("User not found"));
 
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
-                    if (jwtUtil.validateToken(refreshToken, userDetails)) {
-                        String newAccessToken = jwtUtil.generateAccessToken((User) userDetails);
+                    if (jwtUtil.validateRefreshToken(refreshToken, userDetails)) {
+                        String newAccessToken = jwtUtil.generateAccessToken(user);
                         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
                     }
                 }
@@ -255,13 +259,13 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
 
-    @PostMapping("/auth/logout")
+    @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         ResponseCookie deleteCookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .sameSite("Strict")
-                .path("/api/auth/refresh")
+                .path("/auth/refresh")
                 .maxAge(0)
                 .build();
 

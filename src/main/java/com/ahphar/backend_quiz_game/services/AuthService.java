@@ -38,22 +38,6 @@ public class AuthService {
 
     }
 
-    // public String authenticateOrThrow(LoginRequestDTO loginRequestDTO) {
-    // User user = userService.findByEmail(loginRequestDTO.getEmail())
-    // .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-    // if (!passwordEncoder.matches(loginRequestDTO.getPassword(),
-    // user.getPassword())) {
-    // throw new BadCredentialsException("Invalid password");
-    // }
-
-    // if (!user.isVerified()) {
-    // throw new IllegalStateException("Email is not verified");
-    // }
-
-    // return jwtUtil.generateToken(user);
-    // }
-
     public String authenticateOrThrow(LoginRequestDTO loginRequestDTO) {
         User user = userService.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));

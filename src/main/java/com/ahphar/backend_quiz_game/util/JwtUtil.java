@@ -33,7 +33,7 @@ public class JwtUtil {
                 .subject(user.getEmail())
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 min
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5)) // 15 min
                 .signWith(secretKey)
                 .compact();
     }
@@ -85,6 +85,25 @@ public class JwtUtil {
                 .getPayload();
 
         return claims.getExpiration().before(new Date());
+    }
+
+    public boolean validateAccessToken(String token, UserDetails userDetails) {
+        try {
+            String email = this.extractEmail(token);
+            return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public boolean validateRefreshToken(String token, UserDetails userDetails) {
+        try {
+            String email = this.extractEmail(token);
+            return email.equals(userDetails.getUsername());
+            // no expiration check here because refresh token has its own expiry
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
 }
