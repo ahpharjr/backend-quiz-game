@@ -53,8 +53,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        //if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null) {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
             if (jwtUtil.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

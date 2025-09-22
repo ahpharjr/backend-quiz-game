@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ahphar.backend_quiz_game.security.CustomAccessDeniedHandler;
+import com.ahphar.backend_quiz_game.security.CustomOAuth2SuccessHandler;
 import com.ahphar.backend_quiz_game.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -27,7 +28,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http, 
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            CustomAccessDeniedHandler accessDeniedHandler)throws Exception {
+            CustomAccessDeniedHandler accessDeniedHandler,
+            CustomOAuth2SuccessHandler oauth2SuccessHandler)throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -37,6 +39,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2
+                    .successHandler(oauth2SuccessHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler));
         return http.build();

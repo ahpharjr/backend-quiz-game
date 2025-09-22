@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +42,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(User user){
+    public void deleteUser(User user) {
         userRepository.delete(user);
     }
 
@@ -73,16 +74,16 @@ public class UserService {
         emailService.sendVerificationCodeEmail(user.getEmail(), code);
     }
 
-    public void sendResetPasswordCode(User user){
+    public void sendResetPasswordCode(User user) {
         String code = generateVerificationCode();
         user.setVerificationCode(code);
         user.setCodeExpiryTime(LocalDateTime.now().plusMinutes(10));
-        
+
         userRepository.save(user);
         emailService.sendResetPasswordCode(user.getEmail(), code);
     }
 
-    public void resetPassword(User user, String newPassword){
+    public void resetPassword(User user, String newPassword) {
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setVerificationCode(null);
@@ -90,10 +91,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-
     public User createNewUserIfNotExists(String email, String username) {
 
-        if(!existsByEmail(email) ) {
+        if (!existsByEmail(email)) {
 
             if (existsByUsername(username)) {
                 username = generateUniqueUsername(username);
@@ -102,17 +102,17 @@ public class UserService {
             User user = new User();
             user.setEmail(email);
             user.setUsername(username);
-            user.setPassword(passwordEncoder.encode("password@123")+ "12");
+            user.setPassword(passwordEncoder.encode("password@123") + "12");
             user.setRegisteredTime(LocalDateTime.now());
             user.setRole(Role.USER);
             user.setVerified(true);
 
             // Save user first to generate ID
-            user = userRepository.save(user); 
-            
+            user = userRepository.save(user);
+
             // Then create profile
             userProfileService.createDefaultProfile(user);
-            
+
             return user;
         }
         return userRepository.findByEmail(email).orElseThrow();
@@ -130,9 +130,8 @@ public class UserService {
         return username;
     }
 
-
     public User updateUsername(User user, String newUsername) {
-        if(userRepository.existsByUsername(newUsername)) {
+        if (userRepository.existsByUsername(newUsername)) {
             throw new IllegalArgumentException("Username already taken.");
         }
 
@@ -140,16 +139,35 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updateProfilePicture(User currentUser, String profilePicture ){
+    public void updateProfilePicture(User currentUser, String profilePicture) {
         currentUser.getProfile().setProfilePicture(profilePicture);
         userRepository.save(currentUser);
     }
 
     public User getCurrentUser(Authentication auth) {
-    String email = auth.getName();
-    return userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
+        String email;
+
+        if (auth.getPrincipal() instanceof OAuth2User oauthUser) {
+            email = oauthUser.getAttribute("email");
+        } else {
+            email = auth.getName(); // JWT principal
+        }
+
+        if (email == null || email.isEmpty()) {
+            throw new RuntimeException("Authenticated user has no email");
+        }
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
     }
+
+    // public User getCurrentUser(Authentication auth) {
+
+    // String email = auth.getName();
+    // System.out.println("email>>>" + email);
+    // return userRepository.findByEmail(email)
+    // .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
+    // }
 
     public void completeEmailVerification(User user) {
         user.setVerified(true);
