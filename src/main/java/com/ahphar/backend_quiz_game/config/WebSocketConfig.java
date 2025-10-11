@@ -16,9 +16,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.setApplicationDestinationPrefixes("/app"); // For incoming client messages (if needed)
     }
 
+    // with web
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws-quizLeaderboard").setAllowedOrigins("*").withSockJS();
-        registry.addEndpoint("/ws-phaseLeaderboard").setAllowedOrigins("*").withSockJS();
+        // replace with your frontend URL
+        registry.addEndpoint("/ws-quizLeaderboard")
+                .setAllowedOriginPatterns("http://localhost:5173") //allow Vite frontend
+                .withSockJS();
+
+        registry.addEndpoint("/ws-phaseLeaderboard")
+                .setAllowedOriginPatterns("http://localhost:5173")
+                .withSockJS();
     }
+    // Work well with fronted flutter mobile app
+    // @Override
+    // public void registerStompEndpoints(StompEndpointRegistry registry) {
+    //     registry.addEndpoint("/ws-quizLeaderboard").setAllowedOrigins("*").withSockJS();
+    //     registry.addEndpoint("/ws-phaseLeaderboard").setAllowedOrigins("*").withSockJS();
+    // }
 }

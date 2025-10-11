@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/", "/v3/api-docs", "/ws-quizLeaderboard/**",
+                        .requestMatchers("/auth/**", "/", "/testconnection", "/v3/api-docs", "/ws-quizLeaderboard/**",
                                 "/ws-phaseLeaderboard/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

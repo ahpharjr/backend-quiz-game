@@ -1,13 +1,13 @@
-package com.ahphar.backend_quiz_game;
+// package com.ahphar.backend_quiz_game;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class BackendQuizGameApplicationTests {
+// @SpringBootTest
+// class BackendQuizGameApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }

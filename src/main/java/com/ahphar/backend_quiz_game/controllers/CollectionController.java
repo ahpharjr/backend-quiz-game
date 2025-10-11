@@ -37,7 +37,6 @@ public class CollectionController {
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<FlashcardResponseDTO>> getFlashcardCollection(Authentication auth) {
         System.out.println("Fetching flashcard collection for user");
         User user = userService.getCurrentUser(auth);
@@ -46,7 +45,7 @@ public class CollectionController {
         System.out.println("Returning flashcard collection for user: " + collections);
         return new ResponseEntity<>(collections, HttpStatus.OK);
     }
-
+ 
     @Operation(
         summary = "Add flashcard to collection",
         description = "Adds a flashcard to the authenticated user's collection. If the card is already added, a 400 response is returned.",

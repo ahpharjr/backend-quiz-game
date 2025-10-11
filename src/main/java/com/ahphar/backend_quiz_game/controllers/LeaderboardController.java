@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/leaderboard")
+@RequestMapping("/leaderboards")
 @Tag(name = "Leaderboard", description = "APIs for quiz and phase leaderboards")
 @RequiredArgsConstructor
 public class LeaderboardController {
