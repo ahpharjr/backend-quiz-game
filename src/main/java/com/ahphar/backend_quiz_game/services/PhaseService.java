@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.PhaseResponseDTO;
+import com.ahphar.backend_quiz_game.exception.PhaseNotFoundException;
 import com.ahphar.backend_quiz_game.mapper.PhaseMapper;
 import com.ahphar.backend_quiz_game.models.Phase;
 import com.ahphar.backend_quiz_game.repositories.PhaseRepository;
@@ -32,7 +33,7 @@ public class PhaseService {
 
     public Phase getPhaseById(Long phaseId) {
         return phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase not found with id: " + phaseId));
+                .orElseThrow(() -> new PhaseNotFoundException("Phase not found with id: " + phaseId));
     }
     
     public PhaseResponseDTO getPhase(Long phaseId){
