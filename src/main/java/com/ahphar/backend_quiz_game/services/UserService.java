@@ -161,14 +161,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
     }
 
-    // public User getCurrentUser(Authentication auth) {
-
-    // String email = auth.getName();
-    // System.out.println("email>>>" + email);
-    // return userRepository.findByEmail(email)
-    // .orElseThrow(() -> new UserNotFoundException("User not found: " + email));
-    // }
-
     public void completeEmailVerification(User user) {
         user.setVerified(true);
         user.setVerificationCode(null);

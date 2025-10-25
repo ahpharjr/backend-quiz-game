@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**", "/", "/testconnection", "/v3/api-docs", "/ws-quizLeaderboard/**",
                                 "/ws-phaseLeaderboard/**")
                         .permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                     .successHandler(oauth2SuccessHandler))

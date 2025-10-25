@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.repositories;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import com.ahphar.backend_quiz_game.models.User;
 public interface UserRepository extends JpaRepository<User, UUID>{
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+    List<User> findAllByOrderByRegisteredTimeDesc();
 
     @EntityGraph(attributePaths = {"profile"})
     Optional<User> findByUsername(String username);
