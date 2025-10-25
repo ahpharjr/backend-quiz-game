@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Tag(name = "Admin Phase Management", description = "APIs for managing phases in the quiz game")
 @RequiredArgsConstructor
 public class AdminPhaseController {

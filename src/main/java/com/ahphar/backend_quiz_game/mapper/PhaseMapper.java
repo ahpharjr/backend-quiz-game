@@ -1,5 +1,7 @@
 package com.ahphar.backend_quiz_game.mapper;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
@@ -14,6 +16,7 @@ public class PhaseMapper {
         phase.setName(requestDto.getName());
         phase.setImage(requestDto.getImage());
         phase.setDesc(requestDto.getDesc());
+        phase.setCreatedAt(LocalDateTime.now());
 
         return phase;
     }
@@ -24,6 +27,7 @@ public class PhaseMapper {
         dto.setName(phase.getName());
         dto.setImage(phase.getImage());
         dto.setDesc(phase.getDesc());
+        dto.setCreatedAt(phase.getCreatedAt());
 
         return dto;
     }
