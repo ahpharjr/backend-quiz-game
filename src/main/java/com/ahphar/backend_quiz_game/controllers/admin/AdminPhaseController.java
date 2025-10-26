@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 import com.ahphar.backend_quiz_game.DTO.PhaseRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.PhaseResponseDTO;
 import com.ahphar.backend_quiz_game.services.PhaseService;
+import com.ahphar.backend_quiz_game.services.S3Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,55 +34,46 @@ import lombok.RequiredArgsConstructor;
 public class AdminPhaseController {
 
     private final PhaseService phaseService;
+    private final S3Service s3Service;
 
-    @Operation(
-        summary = "Get all phases", 
-        description = "Retrieve a list of all phases in the quiz game",
-        security = @SecurityRequirement(name = "bearerAuth")
-        )
+    @Operation(summary = "Get all phases", description = "Retrieve a list of all phases in the quiz game", security = @SecurityRequirement(name = "bearerAuth"))
     @GetMapping("/phases")
-    public ResponseEntity<List<PhaseResponseDTO>> getAllPhases(){
+    public ResponseEntity<List<PhaseResponseDTO>> getAllPhases() {
 
         List<PhaseResponseDTO> phases = phaseService.getAllPhases();
 
         return ResponseEntity.ok(phases);
     }
 
-    @Operation(
-        summary = "Create a new phase",
-        description = "Creates a new phase in the quiz game. Requires admin privileges.",
-        security = @SecurityRequirement(name = "bearerAuth")
-    )
+    @Operation(summary = "Create a new phase", description = "Creates a new phase in the quiz game. Requires admin privileges.", security = @SecurityRequirement(name = "bearerAuth"))
     @PostMapping("/phase")
     public ResponseEntity<MessageResponse> createPhase(@Valid @RequestBody PhaseRequestDTO requestDto) {
-        
+
         phaseService.createPhase(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Phase created successfully"));
     }
 
-    @Operation(
-        summary = "Update an existing phase",
-        description = "Updates the details of an existing phase. Requires admin privileges.",
-        security = @SecurityRequirement(name = "bearerAuth")
-    )
+    @Operation(summary = "Update an existing phase", description = "Updates the details of an existing phase. Requires admin privileges.", security = @SecurityRequirement(name = "bearerAuth"))
     @PutMapping("/phases/{phaseId}")
-    public ResponseEntity<MessageResponse> updatePhase(@PathVariable Long phaseId, @Valid @RequestBody PhaseRequestDTO requestDto) {
-        
+    public ResponseEntity<MessageResponse> updatePhase(@PathVariable Long phaseId,
+            @Valid @RequestBody PhaseRequestDTO requestDto) {
+
         phaseService.updatePhase(phaseId, requestDto);
         return ResponseEntity.ok(new MessageResponse("Phase updated successfully"));
     }
 
-    @Operation(
-        summary = "Delete a phase",
-        description = "Deletes an existing phase and all the related topics from the quiz game. Requires admin privileges.",
-        security = @SecurityRequirement(name = "bearerAuth")
-    )
+    @PostMapping("/phases/image")
+    public ResponseEntity<String> uploadPhaseImage(@RequestParam("file") MultipartFile file) {
+        String imageUrl = s3Service.uploadFile(file);
+        return ResponseEntity.ok(imageUrl);
+    }
+
+    @Operation(summary = "Delete a phase", description = "Deletes an existing phase and all the related topics from the quiz game. Requires admin privileges.", security = @SecurityRequirement(name = "bearerAuth"))
     @DeleteMapping("/phases/{phaseId}")
     public ResponseEntity<MessageResponse> deletePhase(@PathVariable Long phaseId) {
-        
+
         phaseService.deletePhase(phaseId);
         return ResponseEntity.ok(new MessageResponse("Phase deleted successfully"));
     }
-
 
 }
