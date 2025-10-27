@@ -1,5 +1,7 @@
 package com.ahphar.backend_quiz_game.mapper;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Component;
 
 import com.ahphar.backend_quiz_game.DTO.TopicRequestDTO;
@@ -24,6 +26,10 @@ public class TopicMapper {
         responseDto.setName(topic.getName());
         responseDto.setImage(topic.getImage());
         responseDto.setDesc(topic.getDesc());
+        responseDto.setCreatedAt(topic.getCreatedAt());
+        responseDto.setPhaseName(topic.getPhase().getName());
+        responseDto.setPhaseId(topic.getPhase().getPhaseId());
+
         return responseDto;
     }
 
@@ -32,6 +38,7 @@ public class TopicMapper {
         topic.setName(requestDto.getName());
         topic.setImage(requestDto.getImage());
         topic.setDesc(requestDto.getDesc());
+        topic.setCreatedAt(LocalDateTime.now());
 
         Phase phase = phaseRepository.findById(requestDto.getPhaseId())
                 .orElseThrow(() -> new PhaseNotFoundException("Phase not found with id: " + requestDto.getPhaseId()));

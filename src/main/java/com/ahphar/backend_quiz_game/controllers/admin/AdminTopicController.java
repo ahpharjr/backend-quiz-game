@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 import com.ahphar.backend_quiz_game.DTO.TopicRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.TopicResponseDTO;
+import com.ahphar.backend_quiz_game.services.S3Service;
 import com.ahphar.backend_quiz_game.services.TopicService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,12 +29,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Tag(name = "Admin Topic Management", description = "APIs for managing topics in the quiz game")
 @RequiredArgsConstructor
 public class AdminTopicController {
 
     private final TopicService topicService;
+    private final S3Service s3Service;
 
     @Operation(
         summary = "Get topics by phase ID",
@@ -67,6 +71,12 @@ public class AdminTopicController {
     public ResponseEntity<MessageResponse> createTopic(@Validated @RequestBody TopicRequestDTO requestDto){
         topicService.createTopic(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Topic created successfully"));
+    }
+
+    @PostMapping("/topics/image")
+    public ResponseEntity<String> uploadTopicImage(@RequestParam("file") MultipartFile file){
+        String imageUrl = s3Service.uploadFile(file, "topics");
+        return ResponseEntity.ok(imageUrl);
     }
 
     @Operation(

@@ -64,7 +64,7 @@ public class AdminPhaseController {
 
     @PostMapping("/phases/image")
     public ResponseEntity<String> uploadPhaseImage(@RequestParam("file") MultipartFile file) {
-        String imageUrl = s3Service.uploadFile(file);
+        String imageUrl = s3Service.uploadFile(file, "phases");
         return ResponseEntity.ok(imageUrl);
     }
 

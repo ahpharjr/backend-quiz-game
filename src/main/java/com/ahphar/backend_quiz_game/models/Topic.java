@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.models;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,6 +20,7 @@ public class Topic {
 	
 	private String name;
 	private String image;
+	private LocalDateTime createdAt;
 	
 	@Column(name = "`desc`")
 	private String desc;

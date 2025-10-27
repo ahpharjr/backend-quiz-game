@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.cache.annotation.CacheEvict;
@@ -61,6 +62,7 @@ public class TopicService {
         existingTopic.setName(requestDTO.getName());
         existingTopic.setImage(requestDTO.getImage());
         existingTopic.setDesc(requestDTO.getDesc());
+        existingTopic.setCreatedAt(LocalDateTime.now());
 
         topicRepository.save(existingTopic);
     }
