@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahphar.backend_quiz_game.DTO.FlashcardRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.FlashcardResponseDTO;
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 import com.ahphar.backend_quiz_game.services.FlashcardService;
+import com.ahphar.backend_quiz_game.services.S3Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,12 +28,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Tag(name = "Admin Flashcard Management", description = "APIs for managing flashcards in the admin panel")
 public class AdminFlashcardController {
 
     private final FlashcardService flashcardService;
+    private final S3Service s3Service;
     
     @Operation(
         summary = "Get all flashcards",
@@ -67,6 +71,12 @@ public class AdminFlashcardController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new MessageResponse("Created new flashcard successfully!"));
+    }
+
+    @PostMapping("/flashcards/image")
+    public ResponseEntity<String> uploadFlashcardImage(@RequestParam("file") MultipartFile file){
+        String imageUrl = s3Service.uploadFile(file, "flashcards");
+        return ResponseEntity.ok(imageUrl);
     }
 
     @Operation(

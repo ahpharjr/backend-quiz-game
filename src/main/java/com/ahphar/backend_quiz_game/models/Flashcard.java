@@ -1,5 +1,7 @@
 package com.ahphar.backend_quiz_game.models;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +20,7 @@ public class Flashcard {
     private String keyword;
     private String definition;
     private String image;
+    private LocalDateTime createAt;
 
     @ManyToOne
     @JoinColumn(name = "topic_id", nullable = false)
