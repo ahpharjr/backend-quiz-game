@@ -19,5 +19,6 @@ public class TopicResponseDTO implements Serializable{
     private LocalDateTime createdAt;
     private String phaseName;
     private Long phaseId;
+    private Long quizId;
     
 }

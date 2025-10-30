@@ -29,6 +29,7 @@ public class TopicMapper {
         responseDto.setCreatedAt(topic.getCreatedAt());
         responseDto.setPhaseName(topic.getPhase().getName());
         responseDto.setPhaseId(topic.getPhase().getPhaseId());
+        responseDto.setQuizId(topic.getQuiz().getQuizId());
 
         return responseDto;
     }
