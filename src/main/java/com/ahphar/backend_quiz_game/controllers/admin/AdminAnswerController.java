@@ -24,7 +24,7 @@ import com.ahphar.backend_quiz_game.DTO.AnswerResponseDTO;
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @Tag(name = "Admin Answer Management", description = "Endpoints for managing answers in the quiz game")
 public class AdminAnswerController {
 

@@ -1,5 +1,7 @@
 package com.ahphar.backend_quiz_game.DTO;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +15,7 @@ public class QuestionResponseDTO {
     private Long questionId;
     private String questionText;
     private String image;
+    private LocalDateTime createdAt;
+    private String quizName;
     private Long phaseId;
 }

@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ahphar.backend_quiz_game.DTO.MessageResponse;
 import com.ahphar.backend_quiz_game.DTO.QuestionRequestDTO;
 import com.ahphar.backend_quiz_game.DTO.QuestionResponseDTO;
 import com.ahphar.backend_quiz_game.services.QuestionService;
+import com.ahphar.backend_quiz_game.services.S3Service;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminQuestionController {
 
     private final QuestionService questionService;
+    private final S3Service s3Service;
     
     @Operation(
         summary = "Get all questions from a quiz",
@@ -42,6 +46,19 @@ public class AdminQuestionController {
         List<QuestionResponseDTO> questions = questionService.getQuestionsByQuizId(quizId);
 
         return ResponseEntity.ok(questions);
+    }
+
+    @GetMapping("/questions/{questionId}")
+    public ResponseEntity<QuestionResponseDTO> getQuestion(@PathVariable Long questionId){
+        QuestionResponseDTO question = questionService.getQuestion(questionId);
+
+        return ResponseEntity.ok(question);
+    }
+
+    @PostMapping("/questions/image")
+    public ResponseEntity<String> uploadQuestionImage(@RequestParam("file") MultipartFile file){
+        String imageUrl = s3Service.uploadFile(file, "questions");
+        return ResponseEntity.ok(imageUrl);
     }
 
     @Operation(

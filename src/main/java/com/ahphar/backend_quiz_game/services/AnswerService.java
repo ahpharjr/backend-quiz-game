@@ -24,10 +24,6 @@ public class AnswerService {
     public List<AnswerResponseDTO> getAllAnswersByQuizId(Long quizId){
         List<Answer> answers = answerRepository.findByQuestion_Quiz_QuizId(quizId);
 
-        if(answers.isEmpty()){
-            throw new AnswerNotFoundException("Answers with quizId " + quizId + " do not exists.");
-        }
-
         return answers.stream()
                 .map(answerMapper::toDto)
                 .toList();
@@ -35,10 +31,6 @@ public class AnswerService {
 
     public List<AnswerResponseDTO> getAllAnswersByQuestionId(Long questionId){
         List<Answer> answers = answerRepository.findByQuestion_QuestionId(questionId);
-
-        if(answers.isEmpty()){
-            throw new AnswerNotFoundException("Answers with questionId " + questionId + " do not exists.");
-        }
 
         return answers.stream()
                 .map(answerMapper::toDto)

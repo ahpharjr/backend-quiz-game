@@ -1,5 +1,6 @@
 package com.ahphar.backend_quiz_game.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -39,6 +40,11 @@ public class QuestionService {
                 .orElseThrow(() -> new QuestionNotFoundException("Question not found with id: " + questionId));
     }
 
+    public QuestionResponseDTO getQuestion(Long questionId){
+        Question question = getQuestionById(questionId);
+        return questionMapper.toDto(question, getPhaseIdFromQuestion(questionId));
+    }
+
     public void createQuestion(QuestionRequestDTO requestDTO, Long quizId) {
         Question question = questionMapper.toModel(requestDTO);
 
@@ -53,6 +59,7 @@ public class QuestionService {
         
         question.setQuestion(requestDTO.getQuestion());
         question.setImage(requestDTO.getImage());
+        question.setCreatedAt(LocalDateTime.now());
         
         questionRepository.save(question);
     }
